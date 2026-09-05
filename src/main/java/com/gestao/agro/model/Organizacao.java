@@ -4,6 +4,7 @@ public class Organizacao {
 
     private Integer id;
     private String nome;
+    private String cnpj;
     private String municipioComunidade;
     private Integer numeroAssociados;
     private String principaisProdutos;
@@ -22,8 +23,9 @@ public class Organizacao {
         this.syncStatus = "PENDENTE";
     }
 
-    public Organizacao(String nome, String municipioComunidade, Integer numeroAssociados) {
+    public Organizacao(String nome, String cnpj, String municipioComunidade, Integer numeroAssociados) {
         this.nome = nome;
+        this.cnpj = cnpj;
         this.municipioComunidade = municipioComunidade;
         this.numeroAssociados = numeroAssociados;
         this.syncStatus = "PENDENTE";
@@ -44,6 +46,14 @@ public class Organizacao {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getCnpj() {
+        return cnpj;
+    }
+
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
     }
 
     public String getMunicipioComunidade() {

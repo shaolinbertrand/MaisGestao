@@ -3,6 +3,8 @@ module com.gestao.agro {
     requires javafx.fxml;
     requires java.sql;
     requires org.xerial.sqlitejdbc;
+    requires org.apache.poi.ooxml;
+    requires com.fasterxml.jackson.databind;
 
     opens com.gestao.agro to javafx.fxml;
     opens com.gestao.agro.controller to javafx.fxml;
@@ -10,6 +12,7 @@ module com.gestao.agro {
 
     exports com.gestao.agro;
     exports com.gestao.agro.model;
+    exports com.gestao.agro.repository;
     exports com.gestao.agro.controller;
     exports com.gestao.agro.util;
 }
