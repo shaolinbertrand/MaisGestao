@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="15.0" style="-fx-padding: 20; -fx-background-color: #F4F6F5;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gestao.agro.controller.DiagnosticoFormController">
+   <children>
+      <!-- CABEÇALHO DO DIAGNÓSTICO -->
+      <VBox spacing="10.0" style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 5, 0, 0, 2);">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+               <children>
+                  <Label text="Diagnóstico de Maturidade (10 Dimensões)" textFill="#1e3a2f">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <Separator orientation="VERTICAL" />
+                  <Label style="-fx-font-weight: bold;" text="Alvo da Avaliação:*" />
+                  <RadioButton fx:id="rbTipoOrg" mnemonicParsing="false" selected="true" text="Cooperativa / Associação">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="grpTipoAlvo" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="rbTipoProd" mnemonicParsing="false" text="Produtor Rural" toggleGroup="$grpTipoAlvo" />
+               </children>
+            </HBox>
+
+            <GridPane hgap="12.0" vgap="10.0">
+              <columnConstraints>
+                <ColumnConstraints minWidth="10.0" prefWidth="120.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="250.0" />
+                <ColumnConstraints minWidth="10.0" prefWidth="120.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="250.0" />
+              </columnConstraints>
+              <children>
+                 <Label fx:id="lblEntidadeAlvo" text="Organização:*" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                 <ComboBox fx:id="cbEntidadeAlvo" maxWidth="1.7976931348623157E308" promptText="Selecione a entidade..." GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                 <Label text="Versão / Ciclo:" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                 <ComboBox fx:id="cbVersaoCiclo" maxWidth="1.7976931348623157E308" promptText="Novo Ciclo (Automático)" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+
+                 <Label text="Data Aplicação:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                 <DatePicker fx:id="dpDataAplicacao" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                 <Label text="Consultor:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                 <TextField fx:id="txtConsultor" editable="false" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+              </children>
+            </GridPane>
+         </children>
+      </VBox>
+
+      <!-- TAB PANE PRINCIPAL: QUESTIONÁRIO E DASHBOARD -->
+      <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+         <tabs>
+            <!-- ABA 1: FORMULÁRIO DO QUESTIONÁRIO -->
+            <Tab text="1. Questionário de Avaliação">
+               <content>
+                  <VBox spacing="10.0" style="-fx-padding: 10 0 0 0;">
+                     <children>
+                        <!-- BARRA DE SELEÇÃO DA DIMENSÃO -->
+                        <HBox alignment="CENTER_LEFT" spacing="12.0" style="-fx-background-color: #E8ECE9; -fx-padding: 10; -fx-background-radius: 6;">
+                           <children>
+                              <Label text="Dimensão Atual:" textFill="#1e3a2f">
+                                 <font>
+                                    <Font name="System Bold" size="13.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="cbDimensaoAtiva" prefWidth="420.0" />
+                              <Button onAction="#dimensaoAnterior" text="◀ Anterior" />
+                              <Button onAction="#proximaDimensao" text="Próxima ▶" />
+                           </children>
+                        </HBox>
+
+                        <!-- CONTAINER DINÂMICO DAS PERGUNTAS E PONTUAÇÃO -->
+                        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+                           <content>
+                              <VBox fx:id="vbQuestoesContainer" spacing="15.0" style="-fx-padding: 10;">
+                                 <!-- Os cards de cada subdimensão/pergunta serão gerados via código aqui -->
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
+
+            <!-- ABA 2: DASHBOARD E MATURIDADE -->
+            <Tab text="2. Dashboard &amp; Maturidade (10 Áreas)">
+               <content>
+                  <VBox spacing="12.0" style="-fx-padding: 12; -fx-background-color: white; -fx-background-radius: 8;">
+                     <children>
+                        <!-- CARDS DE RESUMO DO RESULTADO -->
+                        <HBox alignment="CENTER_LEFT" spacing="20.0">
+                           <children>
+                              <VBox alignment="CENTER" prefHeight="70.0" prefWidth="180.0" style="-fx-background-color: #E8F5E9; -fx-background-radius: 8; -fx-border-color: #C8E6C9; -fx-border-radius: 8;">
+                                 <children>
+                                    <Label text="MÉDIA GERAL" textFill="#2E7D32">
+                                       <font>
+                                          <Font name="System Bold" size="11.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="lblMediaGeral" text="0.0" textFill="#1B5E20">
+                                       <font>
+                                          <Font name="System Bold" size="26.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+
+                              <VBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="4.0" style="-fx-background-color: #F5F5F5; -fx-padding: 0 15; -fx-background-radius: 8; -fx-border-color: #E0E0E0; -fx-border-radius: 8;" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label text="ESTÁGIO DE MATURIDADE IDENTIFICADO:" textFill="#616161">
+                                       <font>
+                                          <Font name="System Bold" size="11.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="lblNivelMaturidade" text="Aguardando Avaliação" textFill="#1E3A2F">
+                                       <font>
+                                          <Font name="System Bold" size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+
+                              <Button onAction="#atualizarGraficoMaturidade" prefHeight="40.0" prefWidth="160.0" style="-fx-background-color: #2E5A44; -fx-text-fill: white; -fx-font-weight: bold;" text="↻ Recalcular Gráfico" />
+                           </children>
+                        </HBox>
+
+                        <!-- GRÁFICO DE BARRAS DE MATURIDADE -->
+                        <BarChart fx:id="graficoMaturidade" animated="false" legendVisible="false" prefHeight="300.0" title="Média por Dimensão (Escala 1 a 5)" VBox.vgrow="ALWAYS">
+                          <xAxis>
+                            <CategoryAxis label="Dimensão Avaliada" side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis autoRanging="false" lowerBound="0.0" tickUnit="1.0" upperBound="5.0" label="Nota Média" side="LEFT" />
+                          </yAxis>
+                        </BarChart>
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+
+      <!-- RODAPÉ DE AÇÕES -->
+      <HBox alignment="CENTER_RIGHT" spacing="15.0" style="-fx-background-color: white; -fx-padding: 12; -fx-background-radius: 6;">
+         <children>
+            <Label fx:id="lblStatusMensagem" textFill="#2e7d32">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Label>
+            <Button onAction="#salvarRascunho" prefHeight="35.0" prefWidth="160.0" style="-fx-background-color: #4A6B5D; -fx-text-fill: white; -fx-font-weight: bold;" text="Salvar Rascunho" />
+            <Button onAction="#concluirDiagnostico" prefHeight="35.0" prefWidth="180.0" style="-fx-background-color: #2E5A44; -fx-text-fill: white; -fx-font-weight: bold;" text="Concluir Diagnóstico" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

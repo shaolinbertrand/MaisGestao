@@ -16,17 +16,24 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        // Inicializa as tabelas do SQLite na abertura
         DatabaseConnection.initializeDatabase();
 
-        scene = new Scene(loadFXML("main"), 1050, 700);
-        stage.setTitle("Sistema de Gestão e Diagnóstico - Cooperativas");
+        scene = new Scene(loadFXML("login"), 600, 500);
+        stage.setTitle("Acesso - Gestão de Cooperativas");
         stage.setScene(scene);
         stage.show();
     }
 
     public static void setRoot(String fxml) throws IOException {
-        scene.setRoot(loadFXML(fxml));
+        Parent root = loadFXML(fxml);
+        scene.setRoot(root);
+        Stage stage = (Stage) scene.getWindow();
+        if ("main".equals(fxml)) {
+            stage.setTitle("Sistema de Gestão e Diagnóstico - Cooperativas");
+            stage.setWidth(1080);
+            stage.setHeight(720);
+            stage.centerOnScreen();
+        }
     }
 
     private static Parent loadFXML(String fxml) throws IOException {

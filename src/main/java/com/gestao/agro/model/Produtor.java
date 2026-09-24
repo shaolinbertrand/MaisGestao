@@ -1,5 +1,6 @@
 package com.gestao.agro.model;
-
+import java.time.LocalDate;
+import java.time.Period;
 public class Produtor {
 
     private Integer id;
@@ -8,6 +9,8 @@ public class Produtor {
     private String cpf;
     private String comunidade;
     private boolean possuiCaf;
+    private LocalDate dataNascimento;
+    private String genero;
     private String principaisCulturas;
     private Double areaPropriedade;
     private String destinoProducao; // "COOPERATIVA", "VENDA_DIRETA", "CONSUMO_PROPRIO"
@@ -17,6 +20,13 @@ public class Produtor {
     public Produtor() {
         this.destinoProducao = "COOPERATIVA";
         this.syncStatus = "PENDENTE";
+    }
+    // Calcula a idade dinamicamente
+    public Integer getIdade() {
+        if (this.dataNascimento == null) {
+            return null;
+        }
+        return Period.between(this.dataNascimento, LocalDate.now()).getYears();
     }
 
     public Produtor(Integer organizacaoId, String nome, String cpf) {
@@ -30,6 +40,19 @@ public class Produtor {
     // Getters e Setters
     public Integer getId() {
         return id;
+    }
+    public LocalDate getDataNascimento(){ 
+        return dataNascimento; 
+    }
+    public void setDataNascimento(LocalDate dataNascimento){
+        this.dataNascimento = dataNascimento;
+    }
+
+    public String getGenero(){
+        return genero;
+    }
+    public void setGenero(String genero){
+        this.genero = genero;
     }
 
     public void setId(Integer id) {

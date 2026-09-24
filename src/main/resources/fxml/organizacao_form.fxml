@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<TabPane tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gestao.agro.controller.OrganizacaoFormController">
+    <tabs>
+        <!-- ABA 1: ORGANIZAÇÃO / COOPERATIVA -->
+        <Tab text="1. Dados da Cooperativa / Associação">
+            <content>
+                <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+                    <content>
+                        <VBox spacing="15.0" style="-fx-padding: 20; -fx-background-color: #F4F6F5;">
+                            <children>
+                                <!-- SELETOR SUPERIOR PARA EDIÇÃO DE COOPERATIVA EXISTENTE -->
+                                <HBox alignment="CENTER_LEFT" spacing="12.0" style="-fx-background-color: #E8ECE9; -fx-padding: 10; -fx-background-radius: 5;">
+                                    <children>
+                                        <Label text="Carregar Organização Existente:" textFill="#1e3a2f">
+                                            <font>
+                                                <Font name="System Bold" size="13.0" />
+                                            </font>
+                                        </Label>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label style="-fx-font-weight: bold;" text="Buscar Cooperativa:" />
+                                                <TextField fx:id="txtBuscaOrg" promptText="Digite o nome, CNPJ ou município..." HBox.hgrow="ALWAYS" />
+                                            </children>
+                                        </HBox>
+                                        <ComboBox fx:id="cbOrgEdicao" prefWidth="350.0" promptText="Selecione para editar ou excluir..." />
+                                        <Button onAction="#novoFormularioOrg" style="-fx-background-color: #4A6B5D; -fx-text-fill: white;" text="+ Nova Organização" />
+                                    </children>
+                                </HBox>
+
+                                <Label text="Formulário da Organização Produtiva" textFill="#1e3a2f">
+                                    <font>
+                                        <Font name="System Bold" size="18.0" />
+                                    </font>
+                                </Label>
+
+                                <GridPane hgap="15.0" vgap="12.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints minWidth="10.0" prefWidth="120.0" />
+                                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="250.0" />
+                                        <ColumnConstraints minWidth="10.0" prefWidth="120.0" />
+                                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="250.0" />
+                                    </columnConstraints>
+                                    <children>
+                                        <Label text="Nome / Razão Social:*" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                        <TextField fx:id="txtOrgNome" promptText="Ex: Coop. Agropecuária de Roraima" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="0" />
+
+                                        <Label text="CNPJ:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                        <TextField fx:id="txtOrgCnpj" promptText="00.000.000/0000-00" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                        <Label text="Município/Comunidade:*" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                        <TextField fx:id="txtOrgMunicipio" promptText="Ex: Cantá - Comunidade Central" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+
+                                        <Label text="Nº de Associados:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                        <TextField fx:id="txtOrgAssociados" promptText="Ex: 30" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                                        <Label text="Faturamento Anual (R$):" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                        <TextField fx:id="txtOrgFaturamento" promptText="Ex: 120000.00" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+
+                                        <Label text="Principais Produtos:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                        <TextField fx:id="txtOrgProdutos" promptText="Ex: Farinha de Mandioca, Mel, Banana" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3" />
+
+                                        <Label text="Canais de Venda:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                                        <TextField fx:id="txtOrgCanais" promptText="Ex: Feiras do produtor, merenda escolar, atacado" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4" />
+
+                                        <Label text="Programas / CAF:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                                        <HBox spacing="20.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5">
+                                            <children>
+                                                <CheckBox fx:id="chkOrgCaf" text="Possui CAF Jurídica Ativa" />
+                                                <CheckBox fx:id="chkOrgPaaPnae" text="Participa de Editais PAA / PNAE" />
+                                            </children>
+                                        </HBox>
+
+                                        <Label text="Situação Documental:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                                        <TextArea fx:id="txtOrgDocumentos" prefRowCount="2" promptText="Estatuto, atas vigentes, certidões..." GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6" />
+
+                                        <Label text="Infraestrutura:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+                                        <TextArea fx:id="txtOrgInfra" prefRowCount="2" promptText="Galpão, veículos, maquinários, silos..." GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7" />
+
+                                        <Label text="Gargalos / Dificuldades:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+                                        <TextArea fx:id="txtOrgDificuldades" prefRowCount="2" promptText="Custos de frete, falta de assistência técnica..." GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="8" />
+                                    </children>
+                                </GridPane>
+
+                                <!-- AÇÕES CRUD COOPERATIVA -->
+                                <HBox alignment="CENTER_RIGHT" spacing="12.0">
+                                    <children>
+                                        <Label fx:id="lblOrgMsg" textFill="#2e7d32">
+                                            <font>
+                                                <Font name="System Bold" size="12.0" />
+                                            </font>
+                                        </Label>
+                                        <Button fx:id="btnExcluirOrg" onAction="#excluirOrganizacao" style="-fx-background-color: #B71C1C; -fx-text-fill: white; -fx-font-weight: bold;" text="Excluir" />
+                                        <Button fx:id="btnSalvarOrg" onAction="#salvarOuAtualizarOrganizacao" prefHeight="35.0" prefWidth="180.0" style="-fx-background-color: #2E5A44; -fx-text-fill: white; -fx-font-weight: bold;" text="Salvar Cooperativa" />
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </content>
+        </Tab>
+
+        <!-- ABA 2: PRODUTORES RURAIS VINCULADOS -->
+        <Tab text="2. Produtores Rurais Vinculados">
+            <content>
+                <VBox spacing="15.0" style="-fx-padding: 20; -fx-background-color: #F4F6F5;">
+                    <children>
+                        <!-- SELETOR DE COOPERATIVA E FILTRO DE BLOQUEIOS -->
+                        <HBox alignment="CENTER_LEFT" spacing="12.0" style="-fx-background-color: #E8ECE9; -fx-padding: 10; -fx-background-radius: 5;">
+                            <children>
+                                <Label text="Cooperativa / Associação:*" textFill="#1e3a2f">
+                                    <font>
+                                        <Font name="System Bold" size="13.0" />
+                                    </font>
+                                </Label>
+                                <ComboBox fx:id="cbOrganizacaoAtiva" prefWidth="320.0" promptText="Selecione uma organização..." />
+                                <Button onAction="#recarregarOrganizacoes" style="-fx-background-color: #2E5A44; -fx-text-fill: white;" text="↻ Atualizar Lista" />
+
+                                <!-- FILTRO RÁPIDO DE BLOQUEADOS -->
+                                <CheckBox fx:id="chkMeusBloqueios" onAction="#filtrarMeusBloqueios" style="-fx-font-weight: bold;" text="Ver apenas bloqueados por mim" />
+                            </children>
+                        </HBox>
+
+                        <GridPane hgap="12.0" vgap="10.0">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="10.0" prefWidth="130.0" />
+                                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="220.0" />
+                                <ColumnConstraints minWidth="10.0" prefWidth="130.0" />
+                                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="220.0" />
+                            </columnConstraints>
+                            <children>
+                                <Label text="Nome Completo:*" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                <TextField fx:id="txtProdNome" promptText="Ex: Manoel Francisco Silva" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                                <Label text="CPF:" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                <TextField fx:id="txtProdCpf" promptText="000.000.000-00" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+
+                                <Label text="Data de Nascimento:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                <DatePicker fx:id="dpDataNascimento" maxWidth="1.7976931348623157E308" promptText="DD/MM/AAAA" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                <Label text="Gênero:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                <ComboBox fx:id="cbGenero" maxWidth="1.7976931348623157E308" promptText="Selecione o gênero..." GridPane.columnIndex="3" GridPane.rowIndex="1" />
+
+                                <Label text="Comunidade:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                <TextField fx:id="txtProdComunidade" promptText="Ex: Vicinal 4" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                                <Label text="Área Total (ha):" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                <TextField fx:id="txtProdArea" promptText="Ex: 25.5" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+
+                                <Label text="Culturas Principais:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                <TextField fx:id="txtProdCulturas" promptText="Ex: Mandioca, Milho, Citros" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                                <!-- DESTINO DA PRODUÇÃO (Linha 3, Lado Direito) -->
+                                <Label style="-fx-font-weight: bold;" text="Destino Produção:*" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                                <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                                    <children>
+                                        <CheckBox fx:id="chkDestinoCoop" text="Cooperativa" />
+                                        <CheckBox fx:id="chkDestinoVendaDireta" text="Venda Direta" />
+                                        <CheckBox fx:id="chkDestinoConsumo" text="Consumo" />
+                                    </children>
+                                </HBox>
+
+                                <Label text="Consultor Bloqueio:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                                <TextField fx:id="txtProdConsultor" editable="false" promptText="Livre (Sem bloqueio)" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                                <CheckBox fx:id="chkProdCaf" text="Possui CAF Ativa" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                            </children>
+                        </GridPane>
+
+                        <!-- AÇÕES CRUD E CONTROLE DE BLOQUEIO -->
+                        <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                            <children>
+                                <Label fx:id="lblProdMsg" textFill="#2e7d32">
+                                    <font>
+                                        <Font name="System Bold" size="12.0" />
+                                    </font>
+                                </Label>
+                                <Button onAction="#limparCamposProdutor" style="-fx-background-color: #757575; -fx-text-fill: white;" text="Limpar Campos" />
+                                <Button fx:id="btnAlternarBloqueio" disable="true" onAction="#alternarBloqueioProdutor" style="-fx-background-color: #EF6C00; -fx-text-fill: white; -fx-font-weight: bold;" text="Bloquear / Desbloquear" />
+                                <Button fx:id="btnExcluirProd" disable="true" onAction="#excluirProdutor" style="-fx-background-color: #B71C1C; -fx-text-fill: white; -fx-font-weight: bold;" text="Excluir" />
+                                <Button fx:id="btnSalvarProd" onAction="#salvarOuAtualizarProdutor" prefHeight="32.0" prefWidth="170.0" style="-fx-background-color: #2E5A44; -fx-text-fill: white; -fx-font-weight: bold;" text="+ Adicionar Produtor" />
+                            </children>
+                        </HBox>
+
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <Label style="-fx-font-weight: bold;" text="Filtrar Produtores:" />
+                                <TextField fx:id="txtBuscaProd" promptText="Filtrar por nome, CPF ou comunidade..." HBox.hgrow="ALWAYS" />
+                            </children>
+                        </HBox>
+
+                        <!-- TABELA DE PRODUTORES -->
+                        <TableView fx:id="tblProdutores" prefHeight="220.0" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colProdNome" prefWidth="170.0" text="Nome" />
+                                <TableColumn fx:id="colProdIdade" prefWidth="60.0" text="Idade" />
+                                <TableColumn fx:id="colProdGenero" prefWidth="90.0" text="Gênero" />
+                                <TableColumn fx:id="colProdCpf" prefWidth="110.0" text="CPF" />
+                                <TableColumn fx:id="colProdComunidade" prefWidth="120.0" text="Comunidade" />
+                                <TableColumn fx:id="colProdDestino" prefWidth="120.0" text="Destino Produção" />
+                                <TableColumn fx:id="colProdConsultor" prefWidth="140.0" text="Bloqueado Por" />
+                            </columns>
+                        </TableView>
+                    </children>
+                </VBox>
+            </content>
+        </Tab>
+    </tabs>
+</TabPane>

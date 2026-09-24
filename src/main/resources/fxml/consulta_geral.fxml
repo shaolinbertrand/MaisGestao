@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="15.0" style="-fx-padding: 20; -fx-background-color: #F4F6F5;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gestao.agro.controller.ConsultaGeralController">
+    <children>
+        <HBox alignment="CENTER_LEFT" spacing="15.0">
+            <children>
+                <Label text="Consulta Geral do Sistema" textFill="#1e3a2f">
+                    <font>
+                        <Font name="System Bold" size="20.0" />
+                    </font>
+                </Label>
+                <Button onAction="#atualizarTabelas" style="-fx-background-color: #2E5A44; -fx-text-fill: white;" text="Atualizar Dados" />
+            </children>
+        </HBox>
+
+        <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <tabs>
+                <!-- ABA COOPERATIVAS -->
+                <Tab text="Cooperativas e Associações">
+                    <content>
+                        <VBox spacing="10.0" style="-fx-padding: 10 0 0 0;">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <children>
+                                        <Label style="-fx-font-weight: bold; -fx-text-fill: #1E3A2F;" text="🔍 Filtrar Cooperativas:" />
+                                        <TextField fx:id="txtFiltroOrganizacao" promptText="Pesquisar por nome, CNPJ ou município..." HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                                <TableView fx:id="tblOrganizacoes" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colOrgId" prefWidth="50.0" text="ID" />
+                                        <TableColumn fx:id="colOrgNome" prefWidth="250.0" text="Nome / Razão Social" />
+                                        <TableColumn fx:id="colOrgCnpj" prefWidth="140.0" text="CNPJ" />
+                                        <TableColumn fx:id="colOrgMunicipio" prefWidth="180.0" text="Município / Comunidade" />
+                                        <TableColumn fx:id="colOrgSocios" prefWidth="90.0" text="Sócios" />
+                                        <TableColumn fx:id="colOrgFaturamento" prefWidth="120.0" text="Faturamento" />
+                                        <TableColumn fx:id="colOrgSync" prefWidth="100.0" text="Status Sync" />
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+
+                <!-- ABA PRODUTORES -->
+                <Tab text="Produtores Rurais">
+                    <content>
+                        <VBox spacing="10.0" style="-fx-padding: 10 0 0 0;">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <children>
+                                        <Label style="-fx-font-weight: bold; -fx-text-fill: #1E3A2F;" text="🔍 Filtrar Produtores:" />
+                                        <TextField fx:id="txtFiltroProdutor" promptText="Pesquisar por nome, CPF ou comunidade..." HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                                <TableView fx:id="tblProdutoresGeral" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colPrdId" prefWidth="50.0" text="ID" />
+                                        <TableColumn fx:id="colPrdOrgId" prefWidth="70.0" text="ID Coop" />
+                                        <TableColumn fx:id="colPrdNome" prefWidth="180.0" text="Nome do Produtor" />
+                                        <TableColumn fx:id="colPrdIdade" prefWidth="65.0" text="Idade" />
+                                        <TableColumn fx:id="colPrdGenero" prefWidth="95.0" text="Gênero" />
+                                        <TableColumn fx:id="colPrdCpf" prefWidth="120.0" text="CPF" />
+                                        <TableColumn fx:id="colPrdComunidade" prefWidth="130.0" text="Comunidade" />
+                                        <TableColumn fx:id="colPrdDestino" prefWidth="130.0" text="Destino Produção" />
+                                        <TableColumn fx:id="colPrdConsultor" prefWidth="150.0" text="Consultor (Bloqueio)" />
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+</VBox>

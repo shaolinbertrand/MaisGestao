@@ -1,99 +1,87 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.gestao.agro.model;
 
-/**
- *
- * @author Jean
- */
+import java.time.LocalDate;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class DiagnosticoVersao {
     private Integer id;
     private Integer organizacaoId;
-    private String tipoEntidade; // "ASSOCIACAO" ou "PRODUTOR"
-    private Integer entidadeId;
-    private Integer versaoNumero;
-    private String dataAplicacao;
+    private Integer produtorId;
+    private int numeroVersao;
+    private LocalDate dataAplicacao;
     private String consultorResponsavel;
-    private Double resumoMaturidade;
     private String status;
+    private String syncStatus;
+
+    // Mapa auxiliar com a média consolidada de cada uma das 10 dimensões
+    private final Map<String, Double> mediasPorDimensao = new LinkedHashMap<>();
 
     public DiagnosticoVersao() {
-        this.versaoNumero = 1;
+        this.dataAplicacao = LocalDate.now();
         this.status = "EM_ANDAMENTO";
+        this.syncStatus = "PENDENTE";
+        this.numeroVersao = 1;
     }
 
-    // Getters e Setters
-    public Integer getId() {
-        return id;
+    // --- Métodos de Análise de Maturidade ---
+
+    public void adicionarMediaDimensao(String dimensao, double media) {
+        mediasPorDimensao.put(dimensao, Math.round(media * 100.0) / 100.0);
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public Map<String, Double> getMediasPorDimensao() {
+        return mediasPorDimensao;
     }
 
-    public Integer getOrganizacaoId() {
-        return organizacaoId;
+    public double getMediaGeral() {
+        if (mediasPorDimensao.isEmpty()) return 0.0;
+        double soma = 0.0;
+        for (double valor : mediasPorDimensao.values()) {
+            soma += valor;
+        }
+        return Math.round((soma / mediasPorDimensao.size()) * 100.0) / 100.0;
     }
 
-    public void setOrganizacaoId(Integer organizacaoId) {
-        this.organizacaoId = organizacaoId;
+    public String getNivelMaturidade() {
+        double geral = getMediaGeral();
+        if (geral < 2.5) return "Crítico (Atenção Imediata)";
+        if (geral < 3.5) return "Básico (Em Estruturação)";
+        if (geral < 4.5) return "Intermediário (Estável)";
+        return "Consolidado (Excelência)";
     }
 
-    public String getTipoEntidade() {
-        return tipoEntidade;
+    public String getCorMaturidadeHex() {
+        double geral = getMediaGeral();
+        if (geral < 2.5) return "#D32F2F"; // Vermelho
+        if (geral < 3.5) return "#F57C00"; // Laranja
+        if (geral < 4.5) return "#1976D2"; // Azul
+        return "#2E7D32";                 // Verde
     }
 
-    public void setTipoEntidade(String tipoEntidade) {
-        this.tipoEntidade = tipoEntidade;
-    }
+    // --- Getters e Setters Originais ---
 
-    public Integer getEntidadeId() {
-        return entidadeId;
-    }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
-    public void setEntidadeId(Integer entidadeId) {
-        this.entidadeId = entidadeId;
-    }
+    public Integer getOrganizacaoId() { return organizacaoId; }
+    public void setOrganizacaoId(Integer organizacaoId) { this.organizacaoId = organizacaoId; }
 
-    public Integer getVersaoNumero() {
-        return versaoNumero;
-    }
+    public Integer getProdutorId() { return produtorId; }
+    public void setProdutorId(Integer produtorId) { this.produtorId = produtorId; }
 
-    public void setVersaoNumero(Integer versaoNumero) {
-        this.versaoNumero = versaoNumero;
-    }
+    public int getNumeroVersao() { return numeroVersao; }
+    public void setNumeroVersao(int numeroVersao) { this.numeroVersao = numeroVersao; }
 
-    public String getDataAplicacao() {
-        return dataAplicacao;
-    }
+    public LocalDate getDataAplicacao() { return dataAplicacao; }
+    public void setDataAplicacao(LocalDate dataAplicacao) { this.dataAplicacao = dataAplicacao; }
 
-    public void setDataAplicacao(String dataAplicacao) {
-        this.dataAplicacao = dataAplicacao;
-    }
+    public String getConsultorResponsavel() { return consultorResponsavel; }
+    public void setConsultorResponsavel(String consultorResponsavel) { this.consultorResponsavel = consultorResponsavel; }
 
-    public String getConsultorResponsavel() {
-        return consultorResponsavel;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
-    public void setConsultorResponsavel(String consultorResponsavel) {
-        this.consultorResponsavel = consultorResponsavel;
-    }
-
-    public Double getResumoMaturidade() {
-        return resumoMaturidade;
-    }
-
-    public void setResumoMaturidade(Double resumoMaturidade) {
-        this.resumoMaturidade = resumoMaturidade;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public String getSyncStatus() { return syncStatus; }
+    public void setSyncStatus(String syncStatus) { this.syncStatus = syncStatus; }
 }

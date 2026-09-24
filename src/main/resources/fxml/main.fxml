@@ -10,14 +10,15 @@
 
 <BorderPane prefHeight="700.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gestao.agro.controller.MainController">
    <left>
-      <VBox prefWidth="240.0" spacing="10.0" style="-fx-background-color: #1E3A2F; -fx-padding: 15;" BorderPane.alignment="CENTER">
+      <VBox prefWidth="250.0" spacing="10.0" style="-fx-background-color: #1E3A2F; -fx-padding: 15;" BorderPane.alignment="CENTER">
          <children>
+            <!-- Cabeçalho do Menu -->
             <Label text="Gestão Agro" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="20.0" />
                </font>
                <VBox.margin>
-                  <Insets bottom="5.0" />
+                  <Insets bottom="2.0" />
                </VBox.margin>
             </Label>
             <Label text="Cooperativas e Produtores" textFill="#b2dfdb">
@@ -25,12 +26,32 @@
                   <Font size="12.0" />
                </font>
                <VBox.margin>
-                  <Insets bottom="20.0" />
+                  <Insets bottom="10.0" />
                </VBox.margin>
             </Label>
+
+            <!-- Card do Consultor Logado -->
+            <VBox spacing="3.0" style="-fx-background-color: #274D3E; -fx-padding: 10; -fx-background-radius: 5;">
+               <children>
+                  <Label text="CONSULTOR ATIVO:" textFill="#81c784">
+                     <font>
+                        <Font name="System Bold" size="10.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblConsultorNome" text="Carregando..." textFill="WHITE" wrapText="true">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="15.0" />
+               </VBox.margin>
+            </VBox>
             
             <!-- Botões de Navegação -->
             <Button fx:id="btnOrganizacao" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#abrirOrganizacao" style="-fx-background-color: #2E5A44; -fx-text-fill: white; -fx-alignment: BASELINE_LEFT;" text="1. Organização e Produtor" />
+            <Button fx:id="btnConsultaGeral" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#abrirConsultaGeral" style="-fx-background-color: #25523D; -fx-text-fill: #E8F5E9; -fx-alignment: BASELINE_LEFT;" text="🔍 Consultar Registros" />
             <Button fx:id="btnDiagnostico" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#abrirDiagnostico" style="-fx-background-color: #2E5A44; -fx-text-fill: white; -fx-alignment: BASELINE_LEFT;" text="2. Diagnóstico (10 Áreas)" />
             <Button fx:id="btnPestel" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#abrirPestel" style="-fx-background-color: #2E5A44; -fx-text-fill: white; -fx-alignment: BASELINE_LEFT;" text="3. Matriz PESTEL" />
             <Button fx:id="btnFofa" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#abrirFofa" style="-fx-background-color: #2E5A44; -fx-text-fill: white; -fx-alignment: BASELINE_LEFT;" text="4. Matriz FOFA / SWOT" />
@@ -40,6 +61,7 @@
             
             <VBox VBox.vgrow="ALWAYS" />
             
+            <!-- Status de Sincronização -->
             <Label fx:id="lblStatusSync" text="● Modo Offline" textFill="#81c784">
                <font>
                   <Font size="12.0" />
