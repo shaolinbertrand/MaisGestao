@@ -194,7 +194,11 @@ public class DiagnosticoRepository {
     // ==========================================
 
     /**
-     * Calcula a média agregada de cada dimensão e preenche o DiagnosticoVersao.
+     * Calcula a média MD_i de cada uma das 15 dimensões do IMO-AF.
+     * Desconsidera automaticamente as opções marcadas como NA (pontuacao = 0).
+     *
+     * @param versao objeto de diagnóstico a ser preenchido
+     * @throws SQLException em caso de falha de conexão ou execução SQL
      */
     public void calcularMediasPorDimensao(DiagnosticoVersao versao) throws SQLException {
         if (versao == null || versao.getId() == null) {
@@ -204,7 +208,7 @@ public class DiagnosticoRepository {
         String sql = """
             SELECT dimensao, AVG(pontuacao) AS media_dimensao
             FROM diagnostico_resposta
-            WHERE diagnostico_versao_id = ?
+            WHERE diagnostico_versao_id = ? AND pontuacao > 0
             GROUP BY dimensao
             ORDER BY dimensao ASC
         """;

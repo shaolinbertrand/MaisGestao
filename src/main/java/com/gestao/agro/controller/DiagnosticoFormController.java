@@ -35,7 +35,7 @@ public class DiagnosticoFormController {
     @FXML private VBox vbQuestoesContainer;
     @FXML private Label lblStatusMensagem;
 
-    // --- Dashboard Analítico e Maturidade (Aba 2) ---
+    // --- Dashboard Analítico IMO-AF (Aba 2) ---
     @FXML private Label lblMediaGeral;
     @FXML private Label lblNivelMaturidade;
     @FXML private BarChart<String, Number> graficoMaturidade;
@@ -44,8 +44,7 @@ public class DiagnosticoFormController {
     private final ProdutorRepository prodRepo = new ProdutorRepository();
     private final DiagnosticoRepository diagRepo = new DiagnosticoRepository();
 
-    // Respostas mantidas em memória durante a navegação entre dimensões
-    // Chave: subdimensao (pergunta)
+    // Armazenamento em memória das respostas (Chave: subdimensao/pergunta)
     private final Map<String, DiagnosticoResposta> respostasEmMemoria = new HashMap<>();
 
     private DiagnosticoVersao versaoAtual = null;
@@ -182,7 +181,7 @@ public class DiagnosticoFormController {
             versaoAtual = null;
             limparDashboardAnalitico();
             lblStatusMensagem.setStyle("-fx-text-fill: #1e3a2f;");
-            lblStatusMensagem.setText("Iniciando novo ciclo de diagnóstico.");
+            lblStatusMensagem.setText("Iniciando novo ciclo de diagnóstico IMO-AF.");
             renderizarQuestoesDimensao(cbDimensaoAtiva.getValue());
             return;
         }
@@ -226,43 +225,54 @@ public class DiagnosticoFormController {
         vbQuestoesContainer.getChildren().clear();
         if (dimensao == null) return;
 
+        int numQuestao = 1;
         for (String pergunta : dimensao.getPerguntas()) {
             VBox cardPergunta = new VBox(8.0);
             cardPergunta.setStyle("-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 6; -fx-border-color: #D9DFDC; -fx-border-radius: 6;");
 
-            Label lblPergunta = new Label(pergunta);
+            Label lblPergunta = new Label(numQuestao + ". " + pergunta);
             lblPergunta.setWrapText(true);
             lblPergunta.setStyle("-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #1E3A2F;");
 
-            // Escala Likert de 1 a 5
+            // Escala Oficial IMO-AF (1 a 5 + NA)
             ToggleGroup grpLikert = new ToggleGroup();
-            HBox hbEscala = new HBox(12.0);
-            hbEscala.setStyle("-fx-padding: 4 0;");
+            VBox vbOpcoes = new VBox(6.0);
+            vbOpcoes.setStyle("-fx-padding: 4 0;");
 
             String[] rotulosEscala = {
-                "1 - Crítico / Inexistente",
-                "2 - Inicial / Precário",
-                "3 - Regular / Em Desenvolvimento",
-                "4 - Bom / Estruturado",
-                "5 - Excelente / Consolidado"
+                "1 - Não existe / não é realizado",
+                "2 - Existe de maneira informal ou muito incipiente",
+                "3 - Existe parcialmente e é realizado com alguma regularidade",
+                "4 - Está estruturado e é realizado regularmente",
+                "5 - Está consolidado, é monitorado e continuamente aperfeiçoado",
+                "NA - Não se aplica"
             };
 
             DiagnosticoResposta respExistente = respostasEmMemoria.get(pergunta);
-            int pontuacaoAtual = (respExistente != null) ? respExistente.getPontuacao() : 0;
+            Integer pontuacaoAtual = (respExistente != null) ? respExistente.getPontuacao() : null;
 
             for (int i = 1; i <= 5; i++) {
                 RadioButton rb = new RadioButton(rotulosEscala[i - 1]);
                 rb.setToggleGroup(grpLikert);
                 rb.setUserData(i);
-                if (i == pontuacaoAtual) {
+                if (pontuacaoAtual != null && pontuacaoAtual == i) {
                     rb.setSelected(true);
                 }
-                hbEscala.getChildren().add(rb);
+                vbOpcoes.getChildren().add(rb);
             }
 
-            // Campos de evidências e plano de ação
+            // Opção NA representada por pontuacao = 0
+            RadioButton rbNA = new RadioButton(rotulosEscala[5]);
+            rbNA.setToggleGroup(grpLikert);
+            rbNA.setUserData(0);
+            if (pontuacaoAtual != null && pontuacaoAtual == 0) {
+                rbNA.setSelected(true);
+            }
+            vbOpcoes.getChildren().add(rbNA);
+
+            // Campos de observação e recomendação
             TextField txtEvidencias = new TextField();
-            txtEvidencias.setPromptText("Evidências observadas / Justificativa da pontuação...");
+            txtEvidencias.setPromptText("Evidências observadas / Justificativa da situação...");
             if (respExistente != null && respExistente.getObservacoesEvidencias() != null) {
                 txtEvidencias.setText(respExistente.getObservacoesEvidencias());
             }
@@ -290,8 +300,9 @@ public class DiagnosticoFormController {
             txtEvidencias.textProperty().addListener((obs, o, n) -> salvarNaMemoria.run());
             txtPlanoAcao.textProperty().addListener((obs, o, n) -> salvarNaMemoria.run());
 
-            cardPergunta.getChildren().addAll(lblPergunta, hbEscala, txtEvidencias, txtPlanoAcao);
+            cardPergunta.getChildren().addAll(lblPergunta, vbOpcoes, txtEvidencias, txtPlanoAcao);
             vbQuestoesContainer.getChildren().add(cardPergunta);
+            numQuestao++;
         }
     }
 
@@ -385,7 +396,6 @@ public class DiagnosticoFormController {
     public void atualizarGraficoMaturidade() {
         if (graficoMaturidade == null) return;
 
-        // Objeto de cálculo da versão
         DiagnosticoVersao analise = (versaoAtual != null) ? versaoAtual : new DiagnosticoVersao();
         analise.getMediasPorDimensao().clear();
 
@@ -398,51 +408,56 @@ public class DiagnosticoFormController {
             }
         }
 
-        // 2. Fallback / Cálculo em tempo real com o que estiver na memória
-        if (analise.getMediasPorDimensao().isEmpty() && !respostasEmMemoria.isEmpty()) {
-            Map<String, List<Integer>> notasPorDimensao = new HashMap<>();
-            for (DiagnosticoResposta r : respostasEmMemoria.values()) {
-                if (r.getPontuacao() > 0 && r.getDimensao() != null) {
-                    notasPorDimensao.computeIfAbsent(r.getDimensao(), k -> new ArrayList<>()).add(r.getPontuacao());
+        // 2. Calcula as médias por dimensão garantindo estritamente o Enum oficial
+        // e considerando apenas notas válidas de 1 a 5 (descarta 0 / NA)
+        for (DimensaoDiagnostico dim : DimensaoDiagnostico.values()) {
+            // Se já não veio do banco com nota calculada
+            if (!analise.getMediasPorDimensao().containsKey(dim.getTitulo())) {
+                List<Integer> notasValidas = new ArrayList<>();
+                for (String pergunta : dim.getPerguntas()) {
+                    DiagnosticoResposta resp = respostasEmMemoria.get(pergunta);
+                    if (resp != null && resp.getPontuacao() > 0) {
+                        notasValidas.add(resp.getPontuacao());
+                    }
                 }
-            }
 
-            for (Map.Entry<String, List<Integer>> entry : notasPorDimensao.entrySet()) {
-                double media = entry.getValue().stream().mapToInt(Integer::intValue).average().orElse(0.0);
-                analise.adicionarMediaDimensao(entry.getKey(), media);
+                if (!notasValidas.isEmpty()) {
+                    double mediaDim = notasValidas.stream().mapToInt(Integer::intValue).average().orElse(0.0);
+                    analise.adicionarMediaDimensao(dim.getTitulo(), mediaDim);
+                } else {
+                    analise.adicionarMediaDimensao(dim.getTitulo(), 0.0);
+                }
             }
         }
 
         // 3. Atualizar Indicadores (Cards)
-        double mediaGeral = analise.getMediaGeral();
+        double imoAfGeral = analise.getMediaGeral();
         if (lblMediaGeral != null) {
-            lblMediaGeral.setText(String.format(Locale.US, "%.2f", mediaGeral));
+            lblMediaGeral.setText(String.format(Locale.US, "%.2f", imoAfGeral));
         }
 
         if (lblNivelMaturidade != null) {
-            if (mediaGeral > 0.0) {
-                lblNivelMaturidade.setText(analise.getNivelMaturidade());
-                lblNivelMaturidade.setStyle("-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: " + analise.getCorMaturidadeHex() + ";");
+            if (imoAfGeral > 0.0) {
+                lblNivelMaturidade.setText(analise.getNivelMaturidade() + " — " + analise.getDescricaoMaturidade());
+                lblNivelMaturidade.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: " + analise.getCorMaturidadeHex() + ";");
             } else {
                 lblNivelMaturidade.setText("Aguardando Avaliação");
-                lblNivelMaturidade.setStyle("-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #757575;");
+                lblNivelMaturidade.setStyle("-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #757575;");
             }
         }
 
-        // 4. Montar Série do BarChart
+        // 4. Montar Série do BarChart para as 15 Dimensões
         graficoMaturidade.getData().clear();
         XYChart.Series<String, Number> serie = new XYChart.Series<>();
-        serie.setName("Média da Dimensão");
+        serie.setName("Média da Dimensão (MD_i)");
 
         for (DimensaoDiagnostico dim : DimensaoDiagnostico.values()) {
             Double nota = analise.getMediasPorDimensao().get(dim.getTitulo());
             double valorGrafico = (nota != null) ? nota : 0.0;
 
-            // Rótulo amigável curto para não poluir o eixo do gráfico
             String rotuloCurto = dim.getTitulo();
             if (rotuloCurto.contains(".")) {
-                rotuloCurto = rotuloCurto.substring(0, rotuloCurto.indexOf('.')).trim();
-                rotuloCurto = "Área " + rotuloCurto;
+                rotuloCurto = "D" + rotuloCurto.substring(0, rotuloCurto.indexOf('.')).trim();
             }
 
             serie.getData().add(new XYChart.Data<>(rotuloCurto, valorGrafico));
@@ -455,7 +470,7 @@ public class DiagnosticoFormController {
         if (lblMediaGeral != null) lblMediaGeral.setText("0.0");
         if (lblNivelMaturidade != null) {
             lblNivelMaturidade.setText("Aguardando Avaliação");
-            lblNivelMaturidade.setStyle("-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #757575;");
+            lblNivelMaturidade.setStyle("-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #757575;");
         }
         if (graficoMaturidade != null) {
             graficoMaturidade.getData().clear();

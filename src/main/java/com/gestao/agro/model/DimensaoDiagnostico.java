@@ -5,84 +5,154 @@ import java.util.List;
 
 public enum DimensaoDiagnostico {
 
-    GOVERNANCA(
-        "1. Governança e Gestão Estratégica",
+    ESTRATEGIA_GOVERNANCA(
+        "1. Estratégia, Governança e Gestão Coletiva",
         Arrays.asList(
-            "Estrutura organizacional, papéis claros e processos de tomada de decisão",
-            "Planejamento estratégico formalizado e monitoramento de metas",
-            "Transparência, prestação de contas e comunicação interna"
+            "A organização possui objetivos e prioridades definidos para os próximos anos?",
+            "Os objetivos da organização são conhecidos pelos associados/cooperados?",
+            "A organização realiza planejamento periódico de suas atividades?",
+            "As decisões importantes são discutidas de forma participativa?",
+            "A organização acompanha a execução de seus planos e objetivos?"
+        )
+    ),
+    LIDERANCA_PARTICIPACAO(
+        "2. Liderança e Participação",
+        Arrays.asList(
+            "A diretoria exerce suas funções de forma organizada e ativa?",
+            "Os associados/cooperados participam regularmente das assembleias e reuniões?",
+            "Os associados/cooperados participam das decisões relacionadas às atividades da organização?",
+            "A diretoria mantém comunicação regular com os associados/cooperados?",
+            "A organização estimula a formação e renovação de lideranças?"
+        )
+    ),
+    PROCESSOS_GESTAO(
+        "3. Processos Organizacionais e Gestão Administrativa",
+        Arrays.asList(
+            "Os principais processos administrativos da organização estão definidos?",
+            "Existem responsáveis definidos para as principais atividades?",
+            "Os documentos administrativos, fiscais e contábeis são organizados e mantidos atualizados?",
+            "A organização mantém registros das suas atividades produtivas e comerciais?",
+            "Os processos internos são avaliados periodicamente para identificar melhorias?"
+        )
+    ),
+    PESSOAS_COMPETENCIAS(
+        "4. Gestão de Pessoas e Competências",
+        Arrays.asList(
+            "Os dirigentes recebem capacitação para exercer suas funções?",
+            "Os associados/cooperados participam de capacitações relacionadas às atividades da organização?",
+            "A organização identifica as principais necessidades de capacitação de seus membros?",
+            "Existe compartilhamento de conhecimentos e experiências entre os associados/cooperados?",
+            "A organização estimula a participação de mulheres e jovens na gestão e nas atividades?"
         )
     ),
     GESTAO_FINANCEIRA(
-        "2. Gestão Financeira e Contábil",
+        "5. Gestão Financeira e Econômica",
         Arrays.asList(
-            "Controle de fluxo de caixa, custos de produção e demonstrativos",
-            "Separação das finanças pessoais e do negócio / cooperativa",
-            "Planejamento orçamentário e gestão de capital de giro"
-        )
-    ),
-    PRODUCAO_OPERACAO(
-        "3. Produção e Operações",
-        Arrays.asList(
-            "Padronização de processos produtivos e controle de perdas",
-            "Adoção de boas práticas agropecuárias (BPA) e rastreabilidade",
-            "Capacidade instalada e planejamento da colheita/safra"
+            "A organização possui controle sistemático de receitas e despesas?",
+            "A organização acompanha regularmente seu fluxo de caixa?",
+            "Os custos das atividades são conhecidos e monitorados?",
+            "A organização realiza prestação de contas aos associados/cooperados de forma transparente?",
+            "As informações financeiras são utilizadas para apoiar decisões?"
         )
     ),
     MERCADO_COMERCIALIZACAO(
-        "4. Mercado e Comercialização",
+        "6. Mercado e Comercialização",
         Arrays.asList(
-            "Diversificação de canais de venda (atacado, varejo, editais públicos)",
-            "Acesso e participação em programas governamentais (PAA / PNAE)",
-            "Estratégia de precificação e conhecimento do perfil do cliente"
+            "A organização conhece os principais mercados para seus produtos?",
+            "A organização possui estratégias para comercialização da produção?",
+            "A organização acompanha preços e condições de mercado?",
+            "A organização possui mais de um canal de comercialização?",
+            "A organização mantém relacionamento regular com compradores e parceiros comerciais?"
         )
     ),
-    SUSTENTABILIDADE_MEIO_AMBIENTE(
-        "5. Sustentabilidade e Meio Ambiente",
+    TECNOLOGIA_DIGITAL(
+        "7. Tecnologia e Transformação Digital",
         Arrays.asList(
-            "Conformidade ambiental e situação do CAR (Cadastro Ambiental Rural)",
-            "Manejo e conservação do solo, água e resíduos sólidos",
-            "Uso de insumos biológicos ou práticas de baixo carbono"
+            "A organização utiliza ferramentas digitais para sua gestão?",
+            "Utiliza planilhas ou sistemas para controlar produção, vendas ou finanças?",
+            "Utiliza ferramentas digitais para comunicação com associados/cooperados?",
+            "Utiliza redes sociais ou outros canais digitais para divulgação e comercialização?",
+            "A organização busca incorporar novas tecnologias para melhorar sua gestão?"
         )
     ),
-    PESSOAS_RECURSOS_HUMANOS(
-        "6. Pessoas e Relações de Trabalho",
+    INOVACAO_VALOR(
+        "8. Inovação e Agregação de Valor",
         Arrays.asList(
-            "Capacitação contínua de colaboradores e cooperados",
-            "Conformidade trabalhista e segurança e saúde no trabalho rural (NR-31)",
-            "Sucessão familiar e atratividade para jovens na atividade"
+            "A organização estimula os associados/cooperados a apresentar novas ideias?",
+            "A organização desenvolve ou busca novos produtos ou formas de comercialização?",
+            "Busca melhorar continuamente a qualidade dos produtos?",
+            "Desenvolve estratégias para agregar valor à produção?",
+            "Avalia os resultados das inovações implementadas?"
         )
     ),
-    INOVACAO_TECNOLOGIA(
-        "7. Inovação e Tecnologia Agropecuária",
+    GESTAO_INFORMACAO(
+        "9. Gestão da Informação e Dados",
         Arrays.asList(
-            "Utilização de ferramentas digitais e conectividade no campo",
-            "Adoção de tecnologias para aumento de produtividade e redução de custos",
-            "Acesso à assistência técnica e extensão rural (ATER) regular"
+            "A organização mantém informações atualizadas sobre seus associados/cooperados?",
+            "Mantém informações sobre produção e capacidade produtiva?",
+            "Registra informações sobre vendas e comercialização?",
+            "Utiliza informações de mercado para planejar suas atividades?",
+            "Utiliza dados e indicadores para apoiar decisões?"
         )
     ),
-    QUALIDADE_CONFORMIDADE(
-        "8. Qualidade e Certificações",
+    RISCOS_REGULARIDADE(
+        "10. Gestão de Riscos e Regularidade",
         Arrays.asList(
-            "Controle de qualidade e conformidade com padrões sanitários",
-            "Existência de selos, certificações ou conformidade CAF/DAP",
-            "Processos de melhoria contínua e tratamento de não conformidades"
+            "A organização mantém sua documentação institucional atualizada?",
+            "A organização acompanha suas obrigações legais, fiscais e administrativas?",
+            "Identifica os principais riscos relacionados à produção e comercialização?",
+            "Possui procedimentos para enfrentar perdas de produção ou problemas de mercado?",
+            "Quando ocorre um problema, são adotadas medidas corretivas?"
         )
     ),
-    LOGISTICA_INFRAESTRUTURA(
-        "9. Infraestrutura e Logística",
+    SUSTENTABILIDADE_TERRITORIO(
+        "11. Sustentabilidade e Desenvolvimento Territorial",
         Arrays.asList(
-            "Adequação de galpões, armazéns, estufas e veículos de transporte",
-            "Conservação de estradas vicinais e escoamento da produção",
-            "Acesso estável a energia elétrica, água e telecomunicações"
+            "A organização incentiva práticas produtivas sustentáveis?",
+            "Busca reduzir desperdícios e perdas na produção?",
+            "Incentiva a conservação do solo, da água e dos recursos naturais?",
+            "Valoriza produtos, conhecimentos e características do território?",
+            "A organização contribui para a geração de renda e permanência das famílias no campo?"
         )
     ),
-    PARCERIAS_INTEGRACAO(
-        "10. Parcerias e Integração Territorial",
+    APRENDIZAGEM_ASSISTENCIA(
+        "12. Aprendizagem Organizacional e Assistência Técnica",
         Arrays.asList(
-            "Relação com órgãos de fomento, bancos de crédito rural e pesquisa (ex: Embrapa)",
-            "Articulação interinstitucional e redes de cooperação local",
-            "Acesso a linhas de crédito produtivo (Pronaf / Plano Safra)"
+            "A organização avalia suas experiências para identificar o que pode ser melhorado?",
+            "Os problemas enfrentados são discutidos coletivamente?",
+            "Os conhecimentos adquiridos são compartilhados entre os associados/cooperados?",
+            "A organização busca assistência técnica quando identifica necessidades?",
+            "Os conhecimentos adquiridos em cursos, oficinas e capacitações são aplicados na organização?"
+        )
+    ),
+    RESULTADOS_DESEMPENHO(
+        "13. Resultados e Desempenho",
+        Arrays.asList(
+            "A organização acompanha o volume de produção comercializado?",
+            "Acompanha sua situação financeira ao longo do tempo?",
+            "Acompanha o número de associados/cooperados ativos?",
+            "Avalia os resultados das vendas e contratos realizados?",
+            "Avalia os benefícios gerados para seus associados/cooperados?"
+        )
+    ),
+    CULTURA_COOPERACAO(
+        "14. Cultura Organizacional, Cooperação e Associativismo",
+        Arrays.asList(
+            "Existe confiança entre os associados/cooperados e a direção?",
+            "Os membros demonstram disposição para trabalhar coletivamente?",
+            "Existe cooperação entre os associados/cooperados para resolver problemas comuns?",
+            "Existe transparência na relação entre direção e associados/cooperados?",
+            "Os associados/cooperados demonstram sentimento de pertencimento à organização?"
+        )
+    ),
+    POLITICAS_REDES(
+        "15. Políticas Públicas, Parcerias e Redes",
+        Arrays.asList(
+            "A organização conhece as principais políticas públicas destinadas à agricultura familiar?",
+            "A organização mantém atualizada a documentação necessária para acessar essas políticas?",
+            "A organização consegue acessar programas de comercialização institucional, quando aplicáveis?",
+            "A organização possui parcerias com instituições públicas, privadas, universidades, órgãos de pesquisa ou assistência técnica?",
+            "A organização participa de redes, fóruns, feiras ou espaços de articulação da agricultura familiar?"
         )
     );
 
