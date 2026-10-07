@@ -5,6 +5,8 @@ import com.gestao.agro.repository.DiagnosticoRepository;
 import com.gestao.agro.repository.OrganizacaoRepository;
 import com.gestao.agro.repository.ProdutorRepository;
 import com.gestao.agro.util.SessaoUsuario;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -40,6 +42,12 @@ public class DiagnosticoFormController {
     @FXML private Label lblNivelMaturidade;
     @FXML private BarChart<String, Number> graficoMaturidade;
 
+    // --- Tabela Perfil de Maturidade ---
+    @FXML private TableView<ItemPerfilMaturidade> tblPerfilMaturidade;
+    @FXML private TableColumn<ItemPerfilMaturidade, String> colPerfilDimensao;
+    @FXML private TableColumn<ItemPerfilMaturidade, String> colPerfilMedia;
+    @FXML private TableColumn<ItemPerfilMaturidade, String> colPerfilNivel;
+
     private final OrganizacaoRepository orgRepo = new OrganizacaoRepository();
     private final ProdutorRepository prodRepo = new ProdutorRepository();
     private final DiagnosticoRepository diagRepo = new DiagnosticoRepository();
@@ -56,8 +64,37 @@ public class DiagnosticoFormController {
 
         configurarNavegacaoDimensoes();
         configurarSeletoresAlvo();
+        configurarTabelaPerfil();
 
         alternarTipoAlvo();
+    }
+
+    private void configurarTabelaPerfil() {
+        colPerfilDimensao.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDimensao()));
+        colPerfilMedia.setCellValueFactory(cell -> new SimpleStringProperty(String.format(Locale.US, "%.2f", cell.getValue().getMedia())));
+        colPerfilNivel.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getNivel()));
+
+        // Estilização condicional do texto do nível
+        colPerfilNivel.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(item);
+                    switch (item) {
+                        case "Inicial" -> setStyle("-fx-text-fill: #C62828; -fx-font-weight: bold;");
+                        case "Emergente" -> setStyle("-fx-text-fill: #EF6C00; -fx-font-weight: bold;");
+                        case "Estruturado" -> setStyle("-fx-text-fill: #F9A825; -fx-font-weight: bold;");
+                        case "Consolidado" -> setStyle("-fx-text-fill: #2E7D32; -fx-font-weight: bold;");
+                        case "Avançado" -> setStyle("-fx-text-fill: #1565C0; -fx-font-weight: bold;");
+                        default -> setStyle("");
+                    }
+                }
+            }
+        });
     }
 
     private void configurarNavegacaoDimensoes() {
@@ -261,7 +298,7 @@ public class DiagnosticoFormController {
                 vbOpcoes.getChildren().add(rb);
             }
 
-            // Opção NA representada por pontuacao = 0
+            // Opção NA com pontuacao = 0
             RadioButton rbNA = new RadioButton(rotulosEscala[5]);
             rbNA.setToggleGroup(grpLikert);
             rbNA.setUserData(0);
@@ -394,12 +431,10 @@ public class DiagnosticoFormController {
 
     @FXML
     public void atualizarGraficoMaturidade() {
-        if (graficoMaturidade == null) return;
-
         DiagnosticoVersao analise = (versaoAtual != null) ? versaoAtual : new DiagnosticoVersao();
         analise.getMediasPorDimensao().clear();
 
-        // 1. Tenta carregar do banco se houver versão persistida
+        // 1. Tenta carregar da base de dados se houver versão persistida
         if (analise.getId() != null) {
             try {
                 diagRepo.calcularMediasPorDimensao(analise);
@@ -408,10 +443,8 @@ public class DiagnosticoFormController {
             }
         }
 
-        // 2. Calcula as médias por dimensão garantindo estritamente o Enum oficial
-        // e considerando apenas notas válidas de 1 a 5 (descarta 0 / NA)
+        // 2. Fallback / Cálculo em memória considerando apenas notas válidas de 1 a 5 (descarta 0 / NA)
         for (DimensaoDiagnostico dim : DimensaoDiagnostico.values()) {
-            // Se já não veio do banco com nota calculada
             if (!analise.getMediasPorDimensao().containsKey(dim.getTitulo())) {
                 List<Integer> notasValidas = new ArrayList<>();
                 for (String pergunta : dim.getPerguntas()) {
@@ -446,34 +479,53 @@ public class DiagnosticoFormController {
             }
         }
 
-        // 4. Montar Série do BarChart para as 15 Dimensões
-        graficoMaturidade.getData().clear();
+        // 4. Montar Série do BarChart e Lista da TableView
+        ObservableList<ItemPerfilMaturidade> itensTabela = FXCollections.observableArrayList();
         XYChart.Series<String, Number> serie = new XYChart.Series<>();
         serie.setName("Média da Dimensão (MD_i)");
 
         for (DimensaoDiagnostico dim : DimensaoDiagnostico.values()) {
             Double nota = analise.getMediasPorDimensao().get(dim.getTitulo());
-            double valorGrafico = (nota != null) ? nota : 0.0;
+            double valorCalculado = (nota != null) ? nota : 0.0;
 
+            // Rótulo curto no gráfico (D1 a D15)
             String rotuloCurto = dim.getTitulo();
             if (rotuloCurto.contains(".")) {
                 rotuloCurto = "D" + rotuloCurto.substring(0, rotuloCurto.indexOf('.')).trim();
             }
+            serie.getData().add(new XYChart.Data<>(rotuloCurto, valorCalculado));
 
-            serie.getData().add(new XYChart.Data<>(rotuloCurto, valorGrafico));
+            // Rótulo limpo para a tabela (ex: "Estratégia, Governança...")
+            String nomeTabela = dim.getTitulo();
+            if (nomeTabela.contains(".")) {
+                nomeTabela = nomeTabela.substring(nomeTabela.indexOf('.') + 1).trim();
+            }
+
+            String nivelDimensao = DiagnosticoVersao.classificarNivelDimensao(valorCalculado);
+            itensTabela.add(new ItemPerfilMaturidade(nomeTabela, valorCalculado, nivelDimensao));
         }
 
-        graficoMaturidade.getData().add(serie);
+        if (graficoMaturidade != null) {
+            graficoMaturidade.getData().clear();
+            graficoMaturidade.getData().add(serie);
+        }
+
+        if (tblPerfilMaturidade != null) {
+            tblPerfilMaturidade.setItems(itensTabela);
+        }
     }
 
     private void limparDashboardAnalitico() {
-        if (lblMediaGeral != null) lblMediaGeral.setText("0.0");
+        if (lblMediaGeral != null) lblMediaGeral.setText("0.00");
         if (lblNivelMaturidade != null) {
             lblNivelMaturidade.setText("Aguardando Avaliação");
             lblNivelMaturidade.setStyle("-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #757575;");
         }
         if (graficoMaturidade != null) {
             graficoMaturidade.getData().clear();
+        }
+        if (tblPerfilMaturidade != null) {
+            tblPerfilMaturidade.getItems().clear();
         }
     }
 }

@@ -48,8 +48,8 @@ public class MainController {
     }
 
     @FXML
-    private void abrirPestel(ActionEvent event) {
-        lblTituloModulo.setText("Módulo 3: Análise PESTEL (Ambiente Externo)");
+    public void abrirPestel(ActionEvent event) {
+        carregarView("/fxml/pestel_view.fxml", "Módulo 3: Análise do Ambiente Externo (Matriz PESTEL)");
     }
 
     @FXML
