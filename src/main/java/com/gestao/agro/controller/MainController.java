@@ -54,7 +54,7 @@ public class MainController {
 
     @FXML
     private void abrirFofa(ActionEvent event) {
-        lblTituloModulo.setText("Módulo 4: Matriz FOFA / SWOT com Cruzamentos");
+        carregarView("/fxml/fofa_view.fxml", "Módulo 4: Matriz FOFA / SWOT com Cruzamentos Estratégicos");
     }
 
     @FXML

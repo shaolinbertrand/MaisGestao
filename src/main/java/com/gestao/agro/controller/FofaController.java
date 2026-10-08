@@ -8,12 +8,12 @@ import com.gestao.agro.repository.OrganizacaoRepository;
 import com.gestao.agro.repository.ProdutorRepository;
 import com.gestao.agro.repository.SwotRepository;
 import com.gestao.agro.util.SessaoUsuario;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.StringConverter;
 
 import java.util.List;
@@ -76,7 +76,7 @@ public class FofaController {
     private final OrganizacaoRepository orgRepo = new OrganizacaoRepository();
     private final ProdutorRepository prodRepo = new ProdutorRepository();
 
-    // Coleções observáveis
+    // Coleções observáveis vinculadas permanentemente às tabelas
     private final ObservableList<FatorSwot> listaForcas = FXCollections.observableArrayList();
     private final ObservableList<FatorSwot> listaFraquezas = FXCollections.observableArrayList();
     private final ObservableList<FatorSwot> listaOportunidades = FXCollections.observableArrayList();
@@ -84,6 +84,7 @@ public class FofaController {
     private final ObservableList<CruzamentoSwot> listaCruzamentos = FXCollections.observableArrayList();
 
     private FatorSwot fatorEmEdicao = null;
+    private boolean ignorarListener = false;
 
     @FXML
     public void initialize() {
@@ -128,30 +129,29 @@ public class FofaController {
             }
         });
 
-        cbEntidadeAlvo.getSelectionModel().selectedItemProperty().addListener((obs, antigo, selecionado) -> 
-            carregarDadosEntidade(selecionado)
-        );
+        cbEntidadeAlvo.getSelectionModel().selectedItemProperty().addListener((obs, antigo, selecionado) -> {
+            if (!ignorarListener && selecionado != null) {
+                carregarDadosEntidade(selecionado);
+            }
+        });
     }
 
     private void configurarTabelasQuadrantes() {
-        // Forças
-        colForcaDesc.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDescricao()));
-        colForcaInt.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getIntensidade()).asObject());
+        // Usa PropertyValueFactory nativo do JavaFX para evitar falha de renderização
+        colForcaDesc.setCellValueFactory(new PropertyValueFactory<>("descricao"));
+        colForcaInt.setCellValueFactory(new PropertyValueFactory<>("intensidade"));
         tblForcas.setItems(listaForcas);
 
-        // Fraquezas
-        colFraquezaDesc.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDescricao()));
-        colFraquezaInt.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getIntensidade()).asObject());
+        colFraquezaDesc.setCellValueFactory(new PropertyValueFactory<>("descricao"));
+        colFraquezaInt.setCellValueFactory(new PropertyValueFactory<>("intensidade"));
         tblFraquezas.setItems(listaFraquezas);
 
-        // Oportunidades
-        colOportunidadeDesc.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDescricao()));
-        colOportunidadeInt.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getIntensidade()).asObject());
+        colOportunidadeDesc.setCellValueFactory(new PropertyValueFactory<>("descricao"));
+        colOportunidadeInt.setCellValueFactory(new PropertyValueFactory<>("intensidade"));
         tblOportunidades.setItems(listaOportunidades);
 
-        // Ameaças
-        colAmeacaDesc.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDescricao()));
-        colAmeacaInt.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getIntensidade()).asObject());
+        colAmeacaDesc.setCellValueFactory(new PropertyValueFactory<>("descricao"));
+        colAmeacaInt.setCellValueFactory(new PropertyValueFactory<>("intensidade"));
         tblAmeacas.setItems(listaAmeacas);
     }
 
@@ -183,18 +183,19 @@ public class FofaController {
         cbFatorInterno.setConverter(conversorFator);
         cbFatorExterno.setConverter(conversorFator);
 
-        colCruzTipo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTipoEstrategia()));
-        colCruzInterno.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDescricaoFatorInterno()));
-        colCruzExterno.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDescricaoFatorExterno()));
-        colCruzEstrategia.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getEstrategiaProposta()));
+        colCruzTipo.setCellValueFactory(new PropertyValueFactory<>("tipoEstrategia"));
+        colCruzInterno.setCellValueFactory(new PropertyValueFactory<>("descricaoFatorInterno"));
+        colCruzExterno.setCellValueFactory(new PropertyValueFactory<>("descricaoFatorExterno"));
+        colCruzEstrategia.setCellValueFactory(new PropertyValueFactory<>("estrategiaProposta"));
         tblCruzamentos.setItems(listaCruzamentos);
     }
 
     private void alternarTipoAlvo() {
-        cbEntidadeAlvo.getItems().clear();
-        limparTudo();
-
+        ignorarListener = true;
         try {
+            cbEntidadeAlvo.getItems().clear();
+            limparTudo();
+
             if (rbTipoOrg.isSelected()) {
                 lblEntidadeAlvo.setText("Organização:*");
                 List<Organizacao> orgs = orgRepo.listarTodas();
@@ -210,12 +211,20 @@ public class FofaController {
             }
         } catch (Exception e) {
             exibirMensagemErro("Erro ao listar entidades: " + e.getMessage());
+        } finally {
+            ignorarListener = false;
+        }
+
+        if (cbEntidadeAlvo.getValue() != null) {
+            carregarDadosEntidade(cbEntidadeAlvo.getValue());
         }
     }
 
     private void carregarDadosEntidade(Object entidade) {
-        limparTudo();
-        if (entidade == null) return;
+        if (entidade == null) {
+            limparTudo();
+            return;
+        }
 
         try {
             List<FatorSwot> fatores;
@@ -230,12 +239,24 @@ public class FofaController {
                 cruzamentos = swotRepo.listarCruzamentosPorProdutor(prod.getId());
             }
 
+            listaForcas.clear();
+            listaFraquezas.clear();
+            listaOportunidades.clear();
+            listaAmeacas.clear();
+            listaCruzamentos.clear();
+
             for (FatorSwot f : fatores) {
-                switch (f.getTipo().toUpperCase()) {
-                    case "FORÇA" -> listaForcas.add(f);
-                    case "FRAQUEZA" -> listaFraquezas.add(f);
-                    case "OPORTUNIDADE" -> listaOportunidades.add(f);
-                    case "AMEAÇA" -> listaAmeacas.add(f);
+                if (f.getTipo() == null) continue;
+                String t = f.getTipo().trim().toUpperCase();
+
+                if (t.contains("FORC") || t.contains("FORÇ")) {
+                    listaForcas.add(f);
+                } else if (t.contains("FRAQ")) {
+                    listaFraquezas.add(f);
+                } else if (t.contains("OPORT")) {
+                    listaOportunidades.add(f);
+                } else if (t.contains("AMEA")) {
+                    listaAmeacas.add(f);
                 }
             }
 
@@ -257,17 +278,17 @@ public class FofaController {
         if (tipoSelecionado == null) return;
 
         if (tipoSelecionado.startsWith("FO")) {
-            cbFatorInterno.setItems(listaForcas);
-            cbFatorExterno.setItems(listaOportunidades);
+            cbFatorInterno.setItems(FXCollections.observableArrayList(listaForcas));
+            cbFatorExterno.setItems(FXCollections.observableArrayList(listaOportunidades));
         } else if (tipoSelecionado.startsWith("FA")) {
-            cbFatorInterno.setItems(listaForcas);
-            cbFatorExterno.setItems(listaAmeacas);
+            cbFatorInterno.setItems(FXCollections.observableArrayList(listaForcas));
+            cbFatorExterno.setItems(FXCollections.observableArrayList(listaAmeacas));
         } else if (tipoSelecionado.startsWith("WO")) {
-            cbFatorInterno.setItems(listaFraquezas);
-            cbFatorExterno.setItems(listaOportunidades);
+            cbFatorInterno.setItems(FXCollections.observableArrayList(listaFraquezas));
+            cbFatorExterno.setItems(FXCollections.observableArrayList(listaOportunidades));
         } else if (tipoSelecionado.startsWith("WA")) {
-            cbFatorInterno.setItems(listaFraquezas);
-            cbFatorExterno.setItems(listaAmeacas);
+            cbFatorInterno.setItems(FXCollections.observableArrayList(listaFraquezas));
+            cbFatorExterno.setItems(FXCollections.observableArrayList(listaAmeacas));
         }
 
         if (!cbFatorInterno.getItems().isEmpty()) cbFatorInterno.getSelectionModel().selectFirst();
@@ -293,7 +314,8 @@ public class FofaController {
         }
 
         try {
-            if (fatorEmEdicao == null) {
+            boolean isNovo = (fatorEmEdicao == null || fatorEmEdicao.getId() == null);
+            if (isNovo) {
                 fatorEmEdicao = new FatorSwot();
                 if (entidade instanceof Organizacao org) {
                     fatorEmEdicao.setOrganizacaoId(org.getId());
@@ -308,18 +330,28 @@ public class FofaController {
             fatorEmEdicao.setDescricao(descricao.trim());
             fatorEmEdicao.setIntensidade((int) sldIntensidade.getValue());
 
-            if (fatorEmEdicao.getId() == null || fatorEmEdicao.getId() == 0) {
-                swotRepo.salvarFator(fatorEmEdicao);
+            if (isNovo) {
+                fatorEmEdicao = swotRepo.salvarFator(fatorEmEdicao);
+                
+                // Insere diretamente na lista observável (sem recarregar o banco inteiro)
+                String t = fatorEmEdicao.getTipo().toUpperCase();
+                if (t.contains("FORC") || t.contains("FORÇ")) listaForcas.add(fatorEmEdicao);
+                else if (t.contains("FRAQ")) listaFraquezas.add(fatorEmEdicao);
+                else if (t.contains("OPORT")) listaOportunidades.add(fatorEmEdicao);
+                else if (t.contains("AMEA")) listaAmeacas.add(fatorEmEdicao);
+
                 lblStatusMensagem.setStyle("-fx-text-fill: #2e7d32;");
                 lblStatusMensagem.setText("Fator adicionado com sucesso.");
             } else {
                 swotRepo.atualizarFator(fatorEmEdicao);
                 lblStatusMensagem.setStyle("-fx-text-fill: #2e7d32;");
                 lblStatusMensagem.setText("Fator atualizado com sucesso.");
+                // Em caso de edição, recarrega
+                carregarDadosEntidade(entidade);
             }
 
+            atualizarContadores();
             limparFormularioFator();
-            carregarDadosEntidade(entidade);
         } catch (Exception e) {
             exibirMensagemErro("Erro ao salvar fator: " + e.getMessage());
         }
@@ -400,16 +432,39 @@ public class FofaController {
     }
 
     private void excluirFator(FatorSwot f) {
-        if (f == null) {
+        if (f == null || f.getId() == null) {
             exibirMensagemErro("Selecione um fator para excluir.");
             return;
         }
 
         try {
-            swotRepo.excluirFator(f.getId());
+            int idParaRemover = f.getId();
+            
+            // 1. Remove do banco SQLite
+            swotRepo.excluirFator(idParaRemover);
+
+            // 2. Remove da lista pelo ID garantindo que não falhe por referência de ponteiro
+            listaForcas.removeIf(item -> item.getId() != null && item.getId().equals(idParaRemover));
+            listaFraquezas.removeIf(item -> item.getId() != null && item.getId().equals(idParaRemover));
+            listaOportunidades.removeIf(item -> item.getId() != null && item.getId().equals(idParaRemover));
+            listaAmeacas.removeIf(item -> item.getId() != null && item.getId().equals(idParaRemover));
+
+            // 3. Atualiza os contadores
+            atualizarContadores();
+
+            // 4. Limpa e atualiza seletores secundários
+            atualizarSeletoresCruzamento(cbTipoCruzamento.getValue());
+
+            // 5. Garante a atualização visual na thread gráfica do JavaFX
+            Platform.runLater(() -> {
+                tblForcas.refresh();
+                tblFraquezas.refresh();
+                tblOportunidades.refresh();
+                tblAmeacas.refresh();
+            });
+
             lblStatusMensagem.setStyle("-fx-text-fill: #2e7d32;");
             lblStatusMensagem.setText("Fator removido com sucesso.");
-            carregarDadosEntidade(cbEntidadeAlvo.getValue());
         } catch (Exception e) {
             exibirMensagemErro("Erro ao excluir fator: " + e.getMessage());
         }
@@ -452,12 +507,13 @@ public class FofaController {
             c.setDescricaoFatorExterno(externo.getDescricao());
             c.setEstrategiaProposta(acao.trim());
 
-            swotRepo.salvarCruzamento(c);
+            c = swotRepo.salvarCruzamento(c);
+            listaCruzamentos.add(0, c);
+
             lblStatusMensagem.setStyle("-fx-text-fill: #2e7d32;");
             lblStatusMensagem.setText("Estratégia cruzada registrada com sucesso.");
 
             limparFormularioCruzamento();
-            carregarDadosEntidade(entidade);
         } catch (Exception e) {
             exibirMensagemErro("Erro ao registrar cruzamento: " + e.getMessage());
         }
@@ -473,9 +529,9 @@ public class FofaController {
 
         try {
             swotRepo.excluirCruzamento(selecionado.getId());
+            listaCruzamentos.remove(selecionado);
             lblStatusMensagem.setStyle("-fx-text-fill: #2e7d32;");
             lblStatusMensagem.setText("Estratégia cruzada removida com sucesso.");
-            carregarDadosEntidade(cbEntidadeAlvo.getValue());
         } catch (Exception e) {
             exibirMensagemErro("Erro ao excluir estratégia: " + e.getMessage());
         }

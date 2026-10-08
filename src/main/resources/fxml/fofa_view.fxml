@@ -7,12 +7,10 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -69,7 +67,7 @@
          </children>
       </VBox>
 
-      <!-- TAB PANE: 4 QUADRANTES E CRUZAMENTOS -->
+      <!-- TAB PANE -->
       <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
          <tabs>
             <!-- ABA 1: MATRIZ 4 QUADRANTES -->
@@ -113,10 +111,9 @@
                                     </HBox>
                                     <TableView fx:id="tblForcas" VBox.vgrow="ALWAYS">
                                        <columns>
-                                          <TableColumn fx:id="colForcaDesc" prefWidth="350.0" text="Fator Interno" />
+                                          <TableColumn fx:id="colForcaDesc" prefWidth="380.0" text="Fator Interno" />
                                           <TableColumn fx:id="colForcaInt" prefWidth="60.0" style="-fx-alignment: CENTER;" text="Int." />
                                        </columns>
-                                       <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
                                     </TableView>
                                     <HBox alignment="CENTER_RIGHT" spacing="6.0">
                                        <children>
@@ -138,10 +135,9 @@
                                     </HBox>
                                     <TableView fx:id="tblFraquezas" VBox.vgrow="ALWAYS">
                                        <columns>
-                                          <TableColumn fx:id="colFraquezaDesc" prefWidth="350.0" text="Fator Interno" />
+                                          <TableColumn fx:id="colFraquezaDesc" prefWidth="380.0" text="Fator Interno" />
                                           <TableColumn fx:id="colFraquezaInt" prefWidth="60.0" style="-fx-alignment: CENTER;" text="Int." />
                                        </columns>
-                                       <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
                                     </TableView>
                                     <HBox alignment="CENTER_RIGHT" spacing="6.0">
                                        <children>
@@ -163,10 +159,9 @@
                                     </HBox>
                                     <TableView fx:id="tblOportunidades" VBox.vgrow="ALWAYS">
                                        <columns>
-                                          <TableColumn fx:id="colOportunidadeDesc" prefWidth="350.0" text="Fator Externo" />
+                                          <TableColumn fx:id="colOportunidadeDesc" prefWidth="380.0" text="Fator Externo" />
                                           <TableColumn fx:id="colOportunidadeInt" prefWidth="60.0" style="-fx-alignment: CENTER;" text="Int." />
                                        </columns>
-                                       <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
                                     </TableView>
                                     <HBox alignment="CENTER_RIGHT" spacing="6.0">
                                        <children>
@@ -188,10 +183,9 @@
                                     </HBox>
                                     <TableView fx:id="tblAmeacas" VBox.vgrow="ALWAYS">
                                        <columns>
-                                          <TableColumn fx:id="colAmeacaDesc" prefWidth="350.0" text="Fator Externo" />
+                                          <TableColumn fx:id="colAmeacaDesc" prefWidth="380.0" text="Fator Externo" />
                                           <TableColumn fx:id="colAmeacaInt" prefWidth="60.0" style="-fx-alignment: CENTER;" text="Int." />
                                        </columns>
-                                       <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
                                     </TableView>
                                     <HBox alignment="CENTER_RIGHT" spacing="6.0">
                                        <children>
@@ -213,7 +207,6 @@
                <content>
                   <VBox spacing="12.0" style="-fx-padding: 12; -fx-background-color: white; -fx-background-radius: 8;">
                      <children>
-                        <!-- FORMULÁRIO DE CRUZAMENTO -->
                         <VBox spacing="8.0" style="-fx-background-color: #F8FAF9; -fx-padding: 12; -fx-background-radius: 6; -fx-border-color: #D9DFDC; -fx-border-radius: 6;">
                            <children>
                               <Label text="Formular Estratégia Cruzada" textFill="#1e3a2f">
@@ -251,7 +244,6 @@
                            </children>
                         </VBox>
 
-                        <!-- TABELA DE CRUZAMENTOS REGISTRADOS -->
                         <VBox spacing="6.0" VBox.vgrow="ALWAYS">
                            <children>
                               <Label text="Estratégias Registradas" textFill="#1e3a2f">
@@ -266,7 +258,6 @@
                                     <TableColumn fx:id="colCruzExterno" prefWidth="230.0" text="Fator Externo" />
                                     <TableColumn fx:id="colCruzEstrategia" prefWidth="350.0" text="Estratégia Proposta" />
                                  </columns>
-                                 <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
                               </TableView>
                               <HBox alignment="CENTER_RIGHT" spacing="8.0">
                                  <children>

@@ -67,4 +67,16 @@ public class FatorSwot {
     public String toString() {
         return "[" + tipo + "] " + descricao;
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FatorSwot fatorSwot = (FatorSwot) o;
+        return id != null && id.equals(fatorSwot.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }
