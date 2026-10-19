@@ -231,8 +231,14 @@
                                     <Label text="Fator Externo:*" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                     <ComboBox fx:id="cbFatorExterno" maxWidth="1.7976931348623157E308" promptText="Selecione oport./ameaça..." GridPane.columnIndex="3" GridPane.rowIndex="1" />
 
+                                    <!-- MODIFICADO: AÇÃO/ESTRATÉGIA COM BOTÃO DA IA -->
                                     <Label text="Ação / Estratégia:*" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                                    <TextField fx:id="txtEstrategiaProposta" promptText="Ex.: Utilizar a certificação orgânica para ingressar no edital de merenda escolar..." GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2" />
+                                    <HBox spacing="10.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2">
+                                        <children>
+                                            <TextField fx:id="txtEstrategiaProposta" promptText="Escreva a estratégia ou gere com IA..." HBox.hgrow="ALWAYS" />
+                                            <Button onAction="#gerarEstrategiaComIA" style="-fx-background-color: #6A1B9A; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="✨ Sugerir com IA" />
+                                        </children>
+                                    </HBox>
                                  </children>
                               </GridPane>
                               <HBox alignment="CENTER_RIGHT" spacing="8.0">

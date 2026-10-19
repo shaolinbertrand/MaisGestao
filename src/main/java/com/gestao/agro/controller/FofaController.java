@@ -7,6 +7,7 @@ import com.gestao.agro.model.Produtor;
 import com.gestao.agro.repository.OrganizacaoRepository;
 import com.gestao.agro.repository.ProdutorRepository;
 import com.gestao.agro.repository.SwotRepository;
+import com.gestao.agro.util.GeminiService;
 import com.gestao.agro.util.SessaoUsuario;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -17,6 +18,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.StringConverter;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class FofaController {
 
@@ -535,6 +537,49 @@ public class FofaController {
         } catch (Exception e) {
             exibirMensagemErro("Erro ao excluir estratégia: " + e.getMessage());
         }
+    }
+
+    @FXML
+    public void gerarEstrategiaComIA() {
+        FatorSwot interno = cbFatorInterno.getValue();
+        FatorSwot externo = cbFatorExterno.getValue();
+        String tipo = cbTipoCruzamento.getValue();
+
+        if (interno == null || externo == null || tipo == null) {
+            exibirMensagemErro("Selecione o tipo, o fator interno e o fator externo antes de usar a IA.");
+            return;
+        }
+
+        // 1. Feedback visual na tela (desabilita o campo enquanto a IA "pensa")
+        txtEstrategiaProposta.setDisable(true);
+        txtEstrategiaProposta.setText("✨ Gerando estratégia com IA Gemini... aguarde.");
+        lblStatusMensagem.setStyle("-fx-text-fill: #1976D2;");
+        lblStatusMensagem.setText("A contactar o Google Gemini...");
+
+        // 2. Chama a API em segundo plano para não congelar o ecrã do JavaFX
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return GeminiService.gerarEstrategiaTows(tipo, interno.getDescricao(), externo.getDescricao());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }).thenAccept(resultado -> {
+            // 3. Atualiza o ecrã com o resultado quando a IA responde
+            Platform.runLater(() -> {
+                txtEstrategiaProposta.setDisable(false);
+                txtEstrategiaProposta.setText(resultado);
+                lblStatusMensagem.setStyle("-fx-text-fill: #2e7d32;");
+                lblStatusMensagem.setText("Estratégia gerada com sucesso pela IA!");
+            });
+        }).exceptionally(ex -> {
+            // 4. Trata erros caso a API falhe
+            Platform.runLater(() -> {
+                txtEstrategiaProposta.setDisable(false);
+                txtEstrategiaProposta.clear();
+                exibirMensagemErro("Falha ao contactar IA: " + ex.getCause().getMessage());
+            });
+            return null;
+        });
     }
 
     @FXML

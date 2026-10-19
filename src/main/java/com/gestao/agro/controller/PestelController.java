@@ -15,7 +15,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.StringConverter;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PestelController {
 
@@ -31,6 +34,9 @@ public class PestelController {
 
     // --- Formulário PESTEL ---
     @FXML private ComboBox<String> cbDimensaoPestel;
+    @FXML private ComboBox<String> cbFatorSugerido;
+    @FXML private TextField txtFatorManual;
+    
     @FXML private RadioButton rbOportunidade;
     @FXML private RadioButton rbAmeaca;
     @FXML private ToggleGroup grpTipoFator;
@@ -38,7 +44,6 @@ public class PestelController {
     @FXML private Label lblValorImpacto;
     @FXML private Slider sldProbabilidade;
     @FXML private Label lblValorProbabilidade;
-    @FXML private TextField txtDescricao;
     @FXML private TextField txtAcaoSugerida;
 
     // --- Tabela Oportunidades ---
@@ -64,18 +69,99 @@ public class PestelController {
     private final ObservableList<FatorPestel> listaOportunidades = FXCollections.observableArrayList();
     private final ObservableList<FatorPestel> listaAmeacas = FXCollections.observableArrayList();
 
+    private final Map<String, List<String>> sugestoesPestel = new HashMap<>();
     private FatorPestel fatorEmEdicao = null;
 
     @FXML
     public void initialize() {
         txtConsultor.setText(SessaoUsuario.getNomeConsultor());
 
+        carregarSugestoesDoCliente();
         configurarDimensoesPestel();
         configurarSliders();
         configurarSeletoresEntidade();
         configurarTabelas();
 
         alternarTipoAlvo();
+    }
+
+    private void carregarSugestoesDoCliente() {
+        sugestoesPestel.put("POLÍTICO", Arrays.asList(
+            "Pouco acesso a políticas públicas de apoio à agricultura familiar",
+            "Descontinuidade de programas e ações governamentais",
+            "Dificuldade de acesso ao PAA e ao PNAE",
+            "Pouco apoio dos órgãos públicos às demandas das organizações",
+            "Falta de articulação entre instituições que atendem à agricultura familiar",
+            "Mudanças nas prioridades governamentais que prejudicam o setor",
+            "Não identifica influência política relevante no momento",
+            "Não sabe avaliar",
+            "Outro fator"
+        ));
+
+        sugestoesPestel.put("ECONÔMICO", Arrays.asList(
+            "Alto custo de insumos e materiais de produção",
+            "Frete caro e dificuldade de transporte da produção",
+            "Poucas opções de compradores e canais de comercialização",
+            "Preços baixos pagos aos agricultores",
+            "Dificuldade de acesso a crédito e financiamento",
+            "Demanda insuficiente ou irregular pelos produtos",
+            "Concorrência com produtos de outras regiões",
+            "Não identifica influência econômica relevante no momento",
+            "Não sabe avaliar",
+            "Outro fator"
+        ));
+
+        sugestoesPestel.put("SOCIAL", Arrays.asList(
+            "Pouca participação dos jovens na agricultura familiar",
+            "Saída de jovens das comunidades rurais",
+            "Dificuldade de encontrar trabalhadores para a produção",
+            "Baixo reconhecimento dos produtos e saberes locais",
+            "Desvalorização do trabalho das mulheres agricultoras",
+            "Mudanças nos hábitos de consumo que reduzem a procura por produtos locais",
+            "Dificuldade de acesso a oportunidades de formação no meio rural",
+            "Não identifica influência sociocultural relevante no momento",
+            "Não sabe avaliar",
+            "Outro fator"
+        ));
+
+        sugestoesPestel.put("TECNOLÓGICO", Arrays.asList(
+            "Falta ou instabilidade de internet e sinal de telefone nas áreas rurais",
+            "Pouca oferta de assistência técnica e extensão rural",
+            "Dificuldade de acesso a máquinas e equipamentos adequados",
+            "Pouca disponibilidade de tecnologias de beneficiamento e conservação",
+            "Dificuldade de acesso a sementes, mudas e insumos adequados",
+            "Pouca oferta de tecnologias adaptadas às condições locais",
+            "Dificuldade de acesso a ferramentas digitais para comercialização",
+            "Não identifica limitação tecnológica externa relevante no momento",
+            "Não sabe avaliar",
+            "Outro fator"
+        ));
+
+        sugestoesPestel.put("ECOLÓGICO / AMBIENTAL", Arrays.asList(
+            "Chuvas irregulares e períodos de seca",
+            "Enchentes, alagamentos ou dificuldades de acesso no inverno",
+            "Queimadas e fumaça que prejudicam a produção",
+            "Dificuldade de acesso à água para produção",
+            "Pragas e doenças que afetam as plantações ou criações",
+            "Degradação do solo e perda de recursos naturais",
+            "Mudanças no clima que alteram o calendário de plantio e colheita",
+            "Não identifica influência ambiental relevante no momento",
+            "Não sabe avaliar",
+            "Outro fator"
+        ));
+
+        sugestoesPestel.put("LEGAL / REGULATÓRIO", Arrays.asList(
+            "Dificuldade de obter ou atualizar o CAF",
+            "Exigências sanitárias difíceis de atender",
+            "Dificuldade de adequar produtos às regras de rotulagem e embalagem",
+            "Exigências documentais para vender ao poder público",
+            "Dificuldades relacionadas à regularização fundiária ou ambiental",
+            "Exigências legais que dificultam a formalização da organização",
+            "Falta de orientação acessível sobre normas e exigências aplicáveis",
+            "Não identifica dificuldade legal externa relevante no momento",
+            "Não sabe avaliar",
+            "Outro fator"
+        ));
     }
 
     private void configurarDimensoesPestel() {
@@ -87,6 +173,33 @@ public class PestelController {
             "Ecológico / Ambiental",
             "Legal / Regulatório"
         ));
+
+        // Atualiza as sugestões sempre que a dimensão PESTEL mudar
+        cbDimensaoPestel.getSelectionModel().selectedItemProperty().addListener((obs, antigo, novo) -> {
+            if (novo != null) {
+                List<String> sugestoes = sugestoesPestel.get(novo.toUpperCase());
+                cbFatorSugerido.setItems(FXCollections.observableArrayList(sugestoes));
+                cbFatorSugerido.getSelectionModel().selectFirst();
+            }
+        });
+
+        // Oculta inicialmente o campo manual
+        txtFatorManual.setVisible(false);
+        txtFatorManual.setManaged(false);
+
+        // Controla a visibilidade do campo manual se escolher "Outro fator"
+        cbFatorSugerido.getSelectionModel().selectedItemProperty().addListener((obs, antigo, novo) -> {
+            if ("Outro fator".equals(novo)) {
+                txtFatorManual.setVisible(true);
+                txtFatorManual.setManaged(true);
+                txtFatorManual.requestFocus();
+            } else {
+                txtFatorManual.setVisible(false);
+                txtFatorManual.setManaged(false);
+                txtFatorManual.clear();
+            }
+        });
+
         cbDimensaoPestel.getSelectionModel().selectFirst();
     }
 
@@ -125,14 +238,12 @@ public class PestelController {
     }
 
     private void configurarTabelas() {
-        // Tabela Oportunidades
         colOpDimensao.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDimensao()));
         colOpDescricao.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDescricao()));
         colOpCriticidade.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getCriticidade()).asObject());
         colOpAcao.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAcaoSugerida()));
         tblOportunidades.setItems(listaOportunidades);
 
-        // Tabela Ameaças
         colAmDimensao.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDimensao()));
         colAmDescricao.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDescricao()));
         colAmCriticidade.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getCriticidade()).asObject());
@@ -207,7 +318,14 @@ public class PestelController {
             return;
         }
 
-        String descricao = txtDescricao.getText();
+        // Pega a descrição do ComboBox ou do campo manual
+        String descricao = "";
+        if ("Outro fator".equals(cbFatorSugerido.getValue())) {
+            descricao = txtFatorManual.getText();
+        } else {
+            descricao = cbFatorSugerido.getValue();
+        }
+
         if (descricao == null || descricao.trim().isEmpty()) {
             exibirMensagemErro("A descrição do fator externo é obrigatória.");
             return;
@@ -271,7 +389,19 @@ public class PestelController {
 
     private void carregarParaEdicao(FatorPestel f) {
         this.fatorEmEdicao = f;
+        
+        // Define a dimensão (isto irá disparar o listener que preenche o cbFatorSugerido)
         cbDimensaoPestel.setValue(f.getDimensao());
+        
+        // Verifica se a descrição do banco está na lista de sugestões gerada
+        if (cbFatorSugerido.getItems().contains(f.getDescricao())) {
+            cbFatorSugerido.setValue(f.getDescricao());
+        } else {
+            // Se foi algo digitado manualmente antes, seleciona "Outro fator" e preenche o manual
+            cbFatorSugerido.setValue("Outro fator");
+            txtFatorManual.setText(f.getDescricao());
+        }
+
         if ("OPORTUNIDADE".equalsIgnoreCase(f.getTipo())) {
             rbOportunidade.setSelected(true);
         } else {
@@ -279,7 +409,6 @@ public class PestelController {
         }
         sldImpacto.setValue(f.getImpacto());
         sldProbabilidade.setValue(f.getProbabilidade());
-        txtDescricao.setText(f.getDescricao());
         txtAcaoSugerida.setText(f.getAcaoSugerida() != null ? f.getAcaoSugerida() : "");
         lblStatusMensagem.setStyle("-fx-text-fill: #1976D2;");
         lblStatusMensagem.setText("Modo de edição: Fator #" + f.getId());
@@ -319,10 +448,16 @@ public class PestelController {
         if (!cbDimensaoPestel.getItems().isEmpty()) {
             cbDimensaoPestel.getSelectionModel().selectFirst();
         }
+        if (!cbFatorSugerido.getItems().isEmpty()) {
+            cbFatorSugerido.getSelectionModel().selectFirst();
+        }
+        txtFatorManual.clear();
+        txtFatorManual.setVisible(false);
+        txtFatorManual.setManaged(false);
+        
         rbOportunidade.setSelected(true);
         sldImpacto.setValue(3.0);
         sldProbabilidade.setValue(3.0);
-        txtDescricao.clear();
         txtAcaoSugerida.clear();
     }
 

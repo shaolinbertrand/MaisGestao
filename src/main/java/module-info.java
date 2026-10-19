@@ -5,6 +5,9 @@ module com.gestao.agro {
     requires org.xerial.sqlitejdbc;
     requires org.apache.poi.ooxml;
     requires com.fasterxml.jackson.databind;
+    requires java.net.http;
+    requires org.json;
+    requires io.github.cdimascio.dotenv.java;
 
     opens com.gestao.agro to javafx.fxml;
     opens com.gestao.agro.controller to javafx.fxml;
