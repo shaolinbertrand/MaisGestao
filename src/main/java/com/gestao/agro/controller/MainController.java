@@ -64,12 +64,12 @@ public class MainController {
 
     @FXML
     private void abrirPlanoAcao(ActionEvent event) {
-        lblTituloModulo.setText("Módulo 6: Plano de Ação 5W2H");
+        carregarView("/fxml/plano_acao_view.fxml", "Módulo 6: Plano de Ação Estratégico (5W2H)");
     }
 
     @FXML
     private void abrirRelatorios(ActionEvent event) {
-        lblTituloModulo.setText("Módulo 7: Geração de Relatórios e Planilhas");
+        carregarView("/fxml/relatorios_view.fxml", "Módulo 7: Geração de Relatórios e Exportação");
     }
 
     private void carregarView(String caminhoFxml, String titulo) {

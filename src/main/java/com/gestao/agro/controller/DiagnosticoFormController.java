@@ -17,6 +17,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 
+import javafx.scene.image.WritableImage;
+import javafx.embed.swing.SwingFXUtils;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
+
 import java.time.LocalDate;
 import java.util.*;
 
@@ -526,6 +532,36 @@ public class DiagnosticoFormController {
         }
         if (tblPerfilMaturidade != null) {
             tblPerfilMaturidade.getItems().clear();
+        }
+    }
+
+    // ==========================================
+    //      EXPORTAÇÃO DE GRÁFICO PARA O WORD
+    // ==========================================
+    
+    /**
+     * Tira uma fotografia (snapshot) do gráfico atual e guarda-a num ficheiro temporário.
+     * @return O ficheiro de imagem temporário gerado, ou null se falhar.
+     */
+    public File capturarGraficoComoImagem() {
+        if (graficoMaturidade == null || graficoMaturidade.getData().isEmpty()) {
+            return null;
+        }
+        try {
+            // Tira a foto do gráfico usando a classe nativa do JavaFX (WritableImage)
+            WritableImage image = graficoMaturidade.snapshot(new javafx.scene.SnapshotParameters(), null);
+            
+            // Cria um ficheiro temporário que o Windows vai apagar depois
+            File tempFile = File.createTempFile("grafico_imo_", ".png");
+            tempFile.deleteOnExit(); // Garante que não ocupamos espaço no disco para sempre
+            
+            // Converte a imagem do JavaFX para PNG
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", tempFile);
+            
+            return tempFile;
+        } catch (IOException e) {
+            System.err.println("Erro ao capturar snapshot do gráfico: " + e.getMessage());
+            return null;
         }
     }
 }

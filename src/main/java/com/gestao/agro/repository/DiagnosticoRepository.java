@@ -12,7 +12,7 @@ import java.util.List;
 public class DiagnosticoRepository {
 
     // ==========================================
-    //           CABEÇALHO (VERSÃO)
+    //            CABEÇALHO (VERSÃO)
     // ==========================================
 
     public DiagnosticoVersao salvarVersao(DiagnosticoVersao versao) throws SQLException {
@@ -109,8 +109,23 @@ public class DiagnosticoRepository {
         return lista;
     }
 
+    // --- NOVO MÉTODO ADICIONADO PARA O MÓDULO DE RELATÓRIOS ---
+    public DiagnosticoVersao buscarVersaoPorId(int versaoId) throws SQLException {
+        String sql = "SELECT * FROM diagnostico_versao WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, versaoId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return extrairVersao(rs);
+                }
+            }
+        }
+        return null;
+    }
+
     // ==========================================
-    //           RESPOSTAS DAS 10 DIMENSÕES
+    //            RESPOSTAS DAS 10 DIMENSÕES
     // ==========================================
 
     public void salvarRespostas(Integer versaoId, List<DiagnosticoResposta> respostas) throws SQLException {
@@ -190,7 +205,7 @@ public class DiagnosticoRepository {
     }
 
     // ==========================================
-    //           ANÁLISE E CÁLCULO DE MÉDIAS
+    //            ANÁLISE E CÁLCULO DE MÉDIAS
     // ==========================================
 
     /**

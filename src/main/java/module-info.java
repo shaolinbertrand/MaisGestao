@@ -8,6 +8,11 @@ module com.gestao.agro {
     requires java.net.http;
     requires org.json;
     requires io.github.cdimascio.dotenv.java;
+    requires org.apache.poi.poi;
+    requires org.apache.logging.log4j;
+    requires org.apache.logging.log4j.core;
+    requires javafx.swing;
+    requires java.desktop;
 
     opens com.gestao.agro to javafx.fxml;
     opens com.gestao.agro.controller to javafx.fxml;

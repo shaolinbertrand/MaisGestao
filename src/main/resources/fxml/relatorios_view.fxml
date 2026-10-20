@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="20.0" style="-fx-padding: 20; -fx-background-color: #F4F6F5;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gestao.agro.controller.RelatorioController">
+   <children>
+      <!-- CABEÇALHO E SELEÇÃO DE ENTIDADE -->
+      <VBox spacing="10.0" style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 5, 0, 0, 2);">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+               <children>
+                  <Label text="Geração de Relatórios e Exportação" textFill="#1e3a2f">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <Separator orientation="VERTICAL" />
+                  <Label style="-fx-font-weight: bold;" text="Alvo do Relatório:*" />
+                  <RadioButton fx:id="rbTipoOrg" mnemonicParsing="false" selected="true" text="Cooperativa / Associação">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="grpTipoAlvo" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="rbTipoProd" mnemonicParsing="false" text="Produtor Rural" toggleGroup="$grpTipoAlvo" />
+               </children>
+            </HBox>
+
+            <GridPane hgap="12.0" vgap="10.0">
+              <columnConstraints>
+                <ColumnConstraints minWidth="10.0" prefWidth="120.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="350.0" />
+                <ColumnConstraints minWidth="10.0" prefWidth="120.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="250.0" />
+              </columnConstraints>
+              <children>
+                 <Label fx:id="lblEntidadeAlvo" text="Organização:*" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                 <ComboBox fx:id="cbEntidadeAlvo" maxWidth="1.7976931348623157E308" promptText="Selecione a entidade..." GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                 <Label text="Consultor:" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                 <TextField fx:id="txtConsultor" editable="false" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+              </children>
+            </GridPane>
+         </children>
+      </VBox>
+
+      <!-- PAINEL DE OPÇÕES E AÇÕES DE EXPORTAÇÃO -->
+      <VBox alignment="CENTER" spacing="25.0" style="-fx-background-color: white; -fx-padding: 30; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.06), 4, 0, 0, 1);" VBox.vgrow="ALWAYS">
+         <children>
+            <Label text="Selecione o formato e o conteúdo da exportação:" textFill="#1e3a2f">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Label>
+
+            <!-- OPÇÕES DE SEÇÕES PARA O WORD -->
+            <VBox spacing="15.0" style="-fx-background-color: #F8FAF9; -fx-padding: 20; -fx-background-radius: 6; -fx-border-color: #D9DFDC; -fx-border-radius: 6;" maxWidth="650.0">
+               <children>
+                  <Label text="Seções a incluir no Relatório Word (DOCX):" style="-fx-font-weight: bold; -fx-text-fill: #1565C0; -fx-font-size: 14px;" />
+                  
+                  <HBox alignment="CENTER_LEFT" spacing="15.0">
+                     <children>
+                        <CheckBox fx:id="chkImoAf" mnemonicParsing="false" selected="true" text="Módulo 2: Diagnóstico IMO-AF (Gráfico de Maturidade)" />
+                        <ComboBox fx:id="cbVersaoCiclo" prefWidth="250.0" promptText="Selecione a avaliação / ciclo..." />
+                     </children>
+                  </HBox>
+                  
+                  <CheckBox fx:id="chkPestel" mnemonicParsing="false" selected="true" text="Módulo 3: Matriz PESTEL (Ambiente Externo)" />
+                  <CheckBox fx:id="chkFofa" mnemonicParsing="false" selected="true" text="Módulo 4: Matriz FOFA / TOWS (Cruzamentos Estratégicos)" />
+                  <CheckBox fx:id="chkGut" mnemonicParsing="false" selected="true" text="Módulo 5: Matriz GUT (Priorização de Problemas)" />
+                  <CheckBox fx:id="chk5w2h" mnemonicParsing="false" selected="true" text="Módulo 6: Plano de Ação Estratégico (5W2H)" />
+               </children>
+            </VBox>
+            
+            <HBox alignment="CENTER" spacing="30.0">
+               <children>
+                  <Button onAction="#gerarRelatorioWord" prefHeight="60.0" prefWidth="250.0" style="-fx-background-color: #1565C0; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-cursor: hand;" text="📄 Gerar Relatório Word" />
+                  <Button onAction="#gerarPlanilhaExcel" prefHeight="60.0" prefWidth="250.0" style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-cursor: hand;" text="📊 Gerar Planilha Excel (5W2H)" />
+               </children>
+            </HBox>
+            
+            <Label text="* O sistema irá solicitar o local onde deseja guardar o ficheiro gerado." textFill="#757575" />
+         </children>
+      </VBox>
+
+      <!-- RODAPÉ DE MENSAGENS -->
+      <HBox alignment="CENTER_LEFT" style="-fx-background-color: white; -fx-padding: 8 12; -fx-background-radius: 6;">
+         <children>
+            <Label fx:id="lblStatusMensagem" textFill="#2e7d32">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+   </children>
+</VBox>
