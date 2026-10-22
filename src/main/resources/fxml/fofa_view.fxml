@@ -18,6 +18,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.text.Font?>
 
 <VBox spacing="15.0" style="-fx-padding: 20; -fx-background-color: #F4F6F5;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gestao.agro.controller.FofaController">
@@ -233,11 +234,12 @@
 
                                     <!-- MODIFICADO: AÇÃO/ESTRATÉGIA COM BOTÃO DA IA -->
                                     <Label text="Ação / Estratégia:*" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                                    <HBox spacing="10.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2">
-                                        <children>
-                                            <TextField fx:id="txtEstrategiaProposta" promptText="Escreva a estratégia ou gere com IA..." HBox.hgrow="ALWAYS" />
-                                            <Button onAction="#gerarEstrategiaComIA" style="-fx-background-color: #6A1B9A; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="✨ Sugerir com IA" />
-                                        </children>
+                                    <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2">
+                                       <children>
+                                          <TextField fx:id="txtEstrategiaProposta" promptText="Escreva a estratégia ou gere com IA..." HBox.hgrow="ALWAYS" />
+                                          <Button fx:id="btnGerarIA" onAction="#gerarEstrategiaComIA" style="-fx-background-color: #6A1B9A; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="✨ Sugerir com IA" />
+                                          <ProgressIndicator fx:id="spinnerIA" prefHeight="25.0" prefWidth="25.0" />
+                                       </children>
                                     </HBox>
                                  </children>
                               </GridPane>

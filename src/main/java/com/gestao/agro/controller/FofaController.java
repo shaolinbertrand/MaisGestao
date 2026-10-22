@@ -64,6 +64,8 @@ public class FofaController {
     @FXML private ComboBox<FatorSwot> cbFatorInterno;
     @FXML private ComboBox<FatorSwot> cbFatorExterno;
     @FXML private TextField txtEstrategiaProposta;
+    @FXML private Button btnGerarIA;
+    @FXML private ProgressIndicator spinnerIA;
 
     // --- Tabela Cruzamentos TOWS ---
     @FXML private TableView<CruzamentoSwot> tblCruzamentos;
@@ -96,6 +98,12 @@ public class FofaController {
         configurarSeletoresEntidade();
         configurarTabelasQuadrantes();
         configurarAbaCruzamentos();
+
+        // Oculta o spinner ao iniciar a tela
+        if (spinnerIA != null) {
+            spinnerIA.setVisible(false);
+            spinnerIA.setManaged(false);
+        }
 
         alternarTipoAlvo();
     }
@@ -550,11 +558,17 @@ public class FofaController {
             return;
         }
 
-        // 1. Feedback visual na tela (desabilita o campo enquanto a IA "pensa")
+        // 1. Feedback visual na tela (desativa campo e botão, exibe o spinner)
         txtEstrategiaProposta.setDisable(true);
-        txtEstrategiaProposta.setText("✨ Gerando estratégia com IA Gemini... aguarde.");
+        txtEstrategiaProposta.setText("✨ A gerar estratégia com o Gemini... aguarde.");
+        if (btnGerarIA != null) btnGerarIA.setDisable(true);
+        if (spinnerIA != null) {
+            spinnerIA.setVisible(true);
+            spinnerIA.setManaged(true);
+        }
+
         lblStatusMensagem.setStyle("-fx-text-fill: #1976D2;");
-        lblStatusMensagem.setText("A contactar o Google Gemini...");
+        lblStatusMensagem.setText("A contactar a Inteligência Artificial...");
 
         // 2. Chama a API em segundo plano para não congelar o ecrã do JavaFX
         CompletableFuture.supplyAsync(() -> {
@@ -564,19 +578,29 @@ public class FofaController {
                 throw new RuntimeException(e);
             }
         }).thenAccept(resultado -> {
-            // 3. Atualiza o ecrã com o resultado quando a IA responde
+            // 3. Atualiza o ecrã com o resultado e restaura os componentes
             Platform.runLater(() -> {
                 txtEstrategiaProposta.setDisable(false);
                 txtEstrategiaProposta.setText(resultado);
+                if (btnGerarIA != null) btnGerarIA.setDisable(false);
+                if (spinnerIA != null) {
+                    spinnerIA.setVisible(false);
+                    spinnerIA.setManaged(false);
+                }
                 lblStatusMensagem.setStyle("-fx-text-fill: #2e7d32;");
                 lblStatusMensagem.setText("Estratégia gerada com sucesso pela IA!");
             });
         }).exceptionally(ex -> {
-            // 4. Trata erros caso a API falhe
+            // 4. Trata erros caso a API falhe e restaura os componentes
             Platform.runLater(() -> {
                 txtEstrategiaProposta.setDisable(false);
                 txtEstrategiaProposta.clear();
-                exibirMensagemErro("Falha ao contactar IA: " + ex.getCause().getMessage());
+                if (btnGerarIA != null) btnGerarIA.setDisable(false);
+                if (spinnerIA != null) {
+                    spinnerIA.setVisible(false);
+                    spinnerIA.setManaged(false);
+                }
+                exibirMensagemErro("Falha ao contactar IA: " + (ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage()));
             });
             return null;
         });

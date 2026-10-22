@@ -7,6 +7,8 @@ import com.gestao.agro.repository.OrganizacaoRepository;
 import com.gestao.agro.repository.PlanoAcaoRepository;
 import com.gestao.agro.repository.ProdutorRepository;
 import com.gestao.agro.util.SessaoUsuario;
+import com.gestao.agro.util.GeminiService;
+import java.util.concurrent.CompletableFuture;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -39,6 +41,10 @@ public class PlanoAcaoController {
     @FXML private TextField txtHow;
     @FXML private TextField txtHowMuch;
     @FXML private ComboBox<String> cbStatus;
+    
+    // --- Botão e Spinner da IA ---
+    @FXML private Button btnGerarComoIA;
+    @FXML private ProgressIndicator spinnerIA;
 
     // --- Tabela de Planos de Ação ---
     @FXML private Label lblTotalCusto;
@@ -72,6 +78,12 @@ public class PlanoAcaoController {
         configurarFormulario();
         configurarSeletoresEntidade();
         configurarTabela();
+
+        // Oculta o spinner de carregamento da IA ao iniciar
+        if (spinnerIA != null) {
+            spinnerIA.setVisible(false);
+            spinnerIA.setManaged(false);
+        }
 
         alternarTipoAlvo();
     }
@@ -378,5 +390,63 @@ public class PlanoAcaoController {
     private void exibirMensagemErro(String msg) {
         lblStatusMensagem.setStyle("-fx-text-fill: #d32f2f;");
         lblStatusMensagem.setText(msg);
+    }
+
+    @FXML
+    public void gerarComoComIA() {
+        String what = txtWhat.getText();
+        String why = txtWhy.getText();
+
+        if (what == null || what.trim().isEmpty()) {
+            exibirMensagemErro("Preencha primeiro o campo 'O quê? (What)' para a IA saber o que vai sugerir.");
+            return;
+        }
+
+        // 1. Desativa o campo, o botão e exibe o spinner de progresso
+        txtHow.setDisable(true);
+        txtHow.setText("✨ A gerar metodologia com o Gemini... aguarde.");
+        if (btnGerarComoIA != null) btnGerarComoIA.setDisable(true);
+        if (spinnerIA != null) {
+            spinnerIA.setVisible(true);
+            spinnerIA.setManaged(true);
+        }
+
+        lblStatusMensagem.setStyle("-fx-text-fill: #1976D2;");
+        lblStatusMensagem.setText("A contactar a Inteligência Artificial para o 5W2H...");
+
+        // 2. Chamada assíncrona para não travar a interface
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return GeminiService.gerarComo5W2H(what, why);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }).thenAccept(resultado -> {
+            Platform.runLater(() -> {
+                // 3. Restaura os elementos de UI após sucesso
+                txtHow.setDisable(false);
+                txtHow.setText(resultado);
+                if (btnGerarComoIA != null) btnGerarComoIA.setDisable(false);
+                if (spinnerIA != null) {
+                    spinnerIA.setVisible(false);
+                    spinnerIA.setManaged(false);
+                }
+                lblStatusMensagem.setStyle("-fx-text-fill: #2e7d32;");
+                lblStatusMensagem.setText("Metodologia gerada com sucesso pela IA!");
+            });
+        }).exceptionally(ex -> {
+            Platform.runLater(() -> {
+                // 4. Restaura os elementos de UI após erro
+                txtHow.setDisable(false);
+                txtHow.clear();
+                if (btnGerarComoIA != null) btnGerarComoIA.setDisable(false);
+                if (spinnerIA != null) {
+                    spinnerIA.setVisible(false);
+                    spinnerIA.setManaged(false);
+                }
+                exibirMensagemErro("Falha ao usar IA: " + (ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage()));
+            });
+            return null;
+        });
     }
 }
